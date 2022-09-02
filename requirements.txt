@@ -23,3 +23,7 @@ toml==0.10.2
 tqdm==4.62.3
 urllib3==1.26.7
 Werkzeug==2.0.2
+
+layoutparser~=0.3.4
+opencv-python~=4.6.0.66
+pdf2image~=1.16.0
