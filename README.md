@@ -13,7 +13,7 @@ This is a summary generator app used for creating authentic summaries for scient
 4. Navigate into the project directory
 
    ```bash
-   $ cd OpenAPI
+   $ cd Summary Creator
    ```
 
 5. Create a new virtual environment
