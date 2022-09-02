@@ -10,7 +10,6 @@
   font-family: "ColfaxAI";
   src: url(https://cdn.openai.com/API/fonts/ColfaxAIBold.woff2) format("woff2"),
     url(https://cdn.openai.com/API/fonts/ColfaxAIBold.woff) format("woff");
-  font-weight: bold;
   font-style: normal;
 }
 body,
@@ -32,7 +31,6 @@ body {
 h3 {
   font-size: 32px;
   line-height: 40px;
-  font-weight: bold;
   color: #202123;
   margin: 16px 0 40px;
 }
@@ -59,8 +57,12 @@ input[type="submit"] {
   border-radius: 4px;
   text-align: center;
   cursor: pointer;
+  margin-bottom: 18px;
 }
 .result {
-  font-weight: bold;
-  margin-top: 40px;
+  margin: 0 auto;
+}
+
+p {
+  max-width: 600px;
 }
