@@ -17,14 +17,19 @@
     <input type="text" name="file_name" placeholder="Enter file name" required/>
     <input type="submit" value="Analyze file"/>
 </form>
-{% if result %}
-    <div class="result">
-        <p>Länge: {{ length }}<br>
-            Tokens ~= {{ approx_tokens }}</p>
+
+<div class="result">
+    {% if raw_text_length and raw_text_tokens %}
+        <p>Länge: {{ raw_text_length }}<br>
+            Tokens ~= {{ raw_text_tokens }}</p>
         <hr>
-        {{ result | safe }}
+    {% endif %}
+
+    {% if raw_text %}
+        {{ raw_text | safe }}
         <hr>
-        {{ summary }}
-    </div>
-{% endif %}
+    {% endif %}
+
+    {{ summary }}
+</div>
 </body>

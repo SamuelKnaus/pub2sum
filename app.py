@@ -12,8 +12,7 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 @app.route("/", methods=("GET", "POST"))
 def index():
-    result = ""
-    summary = ""
+    raw_text = ""
 
     if request.method == "POST":
         file_name = request.form["file_name"]
@@ -69,22 +68,25 @@ def index():
         request_text = ""
         for txt in text_blocks.get_texts():
             request_text += txt
-            result += "<p>" + txt + "</p>"
+            raw_text += "<p>" + txt + "</p>"
 
-        summary = generate_summary(request_text)
-        # return redirect(url_for("index", result=response.choices[0].text))
+        generate_summary(request_text)
 
-    length = len(result.split())
-    approx_tokens = length * 1.25
+    summary = request.args.get("result")
 
-    return render_template("index.html", result=result, length=length, approx_tokens=approx_tokens, summary=summary)
+    raw_text_length = len(raw_text.split())
+    raw_text_tokens = raw_text_length * 1.25
+
+    return render_template("index.html",
+                           raw_text_length=raw_text_length,
+                           raw_text_tokens=raw_text_tokens,
+                           raw_text=raw_text,
+                           summary=summary)
 
 
 def generate_summary(text):
-    tldr_tag = "\n tl;dr:"
+    tldr_tag = "\ntl;dr:"
     text += tldr_tag
-
-    print(text)
 
     response = openai.Completion.create(
         model="text-davinci-002",
@@ -97,4 +99,4 @@ def generate_summary(text):
         stop=["\n"]
     )
 
-    return response.choices[0].text
+    return redirect(url_for("index", result=response.choices[0].text))
