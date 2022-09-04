@@ -13,6 +13,8 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 @app.route("/", methods=("GET", "POST"))
 def index():
     raw_text = ""
+    completion_tokens = ""
+    summary = ""
 
     if request.method == "POST":
         file_name = request.form["file_name"]
@@ -41,11 +43,9 @@ def index():
         left_interval = lp.Interval(0, w / 2 * 1.05, axis='x').put_on_canvas(image)
 
         left_blocks = text_blocks.filter_by(left_interval, center=True)
-        print(type(left_blocks))
         left_blocks.sort(key=lambda b: b.coordinates[1], inplace=True)
 
         right_blocks = [b for b in text_blocks if b not in left_blocks]
-        print(type(right_blocks))
         # right_blocks.sort(key=lambda b: b.coordinates[1], inplace=True)
         right_blocks.sort(key=lambda b: b.coordinates[1])
 
@@ -70,33 +70,28 @@ def index():
             request_text += txt
             raw_text += "<p>" + txt + "</p>"
 
-        generate_summary(request_text)
+        tldr_tag = "\ntl;dr:"
+        request_text += tldr_tag
 
-    summary = request.args.get("result")
+        response = openai.Completion.create(
+            model="text-davinci-002",
+            prompt=request_text,
+            temperature=0,
+            max_tokens=200
+        )
 
-    raw_text_length = len(raw_text.split())
-    raw_text_tokens = raw_text_length * 1.25
+        summary = response.choices[0].text
+        completion_tokens = response.usage.completion_tokens
+
+    raw_text_word_count = len(raw_text.split())
+    raw_text_tokens = raw_text_word_count * 1.25
+
+    output_word_count = len(summary.split())
 
     return render_template("index.html",
-                           raw_text_length=raw_text_length,
+                           raw_text_word_count=raw_text_word_count,
                            raw_text_tokens=raw_text_tokens,
                            raw_text=raw_text,
+                           output_word_count=output_word_count,
+                           completion_tokens=completion_tokens,
                            summary=summary)
-
-
-def generate_summary(text):
-    tldr_tag = "\ntl;dr:"
-    text += tldr_tag
-
-    response = openai.Completion.create(
-        model="text-davinci-002",
-        prompt=text,
-        temperature=0.1,
-        max_tokens=140,
-        top_p=1,
-        frequency_penalty=0,
-        presence_penalty=0,
-        stop=["\n"]
-    )
-
-    return redirect(url_for("index", result=response.choices[0].text))

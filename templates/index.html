@@ -19,9 +19,9 @@
 </form>
 
 <div class="result">
-    {% if raw_text_length and raw_text_tokens %}
-        <p>Länge: {{ raw_text_length }}<br>
-            Tokens ~= {{ raw_text_tokens }}</p>
+    {% if raw_text_word_count or raw_text_tokens %}
+        <p>Input Word Count = {{ raw_text_word_count }}<br>
+            # of Tokens ~= {{ raw_text_tokens }}</p>
         <hr>
     {% endif %}
 
@@ -30,6 +30,10 @@
         <hr>
     {% endif %}
 
-    {{ summary }}
+    {% if completion_tokens or summary %}
+        <p>Output Word Count: {{ output_word_count }}<br>
+            # of Output Tokens = {{ completion_tokens }}</p>
+        <p>{{ summary }}</p>
+    {% endif %}
 </div>
 </body>
