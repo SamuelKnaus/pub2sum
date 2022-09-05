@@ -1,10 +1,11 @@
 import os
 
 import openai
-from flask import Flask, redirect, render_template, request, url_for
+from flask import Flask, render_template, request
 
 import layoutparser as lp
 import cv2
+import numpy as np
 
 app = Flask(__name__)
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -18,11 +19,11 @@ def index():
 
     if request.method == "POST":
         file_name = request.form["file_name"]
-        # pdf_tokens, pdf_images = lp.load_pdf("static/references/" + file_name, load_images=True)
-        # image = pdf_images[1]
 
-        image = cv2.imread("static/references/" + file_name)
-        image = image[..., ::-1]
+        pdf_layout, pdf_images = lp.load_pdf("static/references/" + file_name, load_images=True)
+        image = np.array(pdf_images[1])
+
+        print(type(image))
 
         model = lp.Detectron2LayoutModel('lp://PubLayNet/mask_rcnn_X_101_32x8d_FPN_3x/config',
                                          extra_config=["MODEL.ROI_HEADS.SCORE_THRESH_TEST", 0.8],
