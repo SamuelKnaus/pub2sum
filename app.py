@@ -7,7 +7,6 @@ import layoutparser as lp
 import numpy as np
 import openai
 import pdf2doi
-import xmltodict
 from flask import Flask, render_template, request
 
 app = Flask(__name__)
@@ -17,8 +16,18 @@ pdf2doi.config.set('verbose', False)
 debug = True
 
 
-@app.route("/", methods=("GET", "POST"))
+@app.route("/", methods=["GET"])
 def index():
+    return render_template("index.html")
+
+
+@app.route("/documentation", methods=["GET"])
+def documentation():
+    return render_template("documentation.html")
+
+
+@app.route("/summarizer", methods=["GET", "POST"])
+def summarizer():
     raw_text = ""
     completion_tokens = ""
     summary = ""
@@ -80,14 +89,14 @@ def index():
         tldr_tag = "\ntl;dr:"
         request_text += tldr_tag
 
-        #response = openai.Completion.create(
+        # response = openai.Completion.create(
         #    model="text-davinci-002",
         #    prompt=request_text,
         #    temperature=0,
         #    max_tokens=200
-        #)
-        #summary = response.choices[0].text[:-1]
-        #completion_tokens = response.usage.completion_tokens
+        # )
+        # summary = response.choices[0].text[:-1]
+        # completion_tokens = response.usage.completion_tokens
 
         references = get_references(file_path)
         summary += " " + references[0]
@@ -98,7 +107,7 @@ def index():
 
     output_word_count = len(summary.split())
 
-    return render_template("index.html",
+    return render_template("summarizer.html",
                            raw_text_word_count=raw_text_word_count,
                            raw_text_tokens=raw_text_tokens,
                            raw_text=raw_text,

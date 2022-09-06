@@ -1,46 +1,45 @@
-<!DOCTYPE html>
-<head>
-    <title>Summary Creator</title>
-    <link
-            rel="shortcut icon"
-            href="{{ url_for('static', filename='document.png') }}"
-    />
-    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}"/>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles/bootstrap.min.css') }}"/>
-</head>
+{% extends "layout.html" %}
 
-<body>
-<a href="/">
-    <img src="{{ url_for('static', filename='document.png') }}" class="icon"/>
-</a>
-<h1>Summarize my file</h1>
-<form action="/" method="post">
-    <input type="text" name="file_name" placeholder="Enter file name" required/>
-    <input type="submit" value="Analyze file"/>
-</form>
+{% block title %}Home - pub2sum{% endblock %}
 
-<div class="result">
-    {% if raw_text_word_count or raw_text_tokens or raw_text %}
-        <h2>Input</h2>
-        <p>Input Word Count = {{ raw_text_word_count }}<br>
-            # of Tokens ~= {{ raw_text_tokens }}</p>
-        {{ raw_text | safe }}
-        <hr>
-    {% endif %}
+{% block navbar %}
+    <ul class="navbar-nav flex-row flex-wrap bd-navbar-nav">
+        <li class="nav-item col-6 col-lg-auto">
+            <a class="nav-link py-2 px-0 px-lg-2" href="{{ url_for('summarizer') }}">Summarizer</a>
+        </li>
+        <li class="nav-item col-6 col-lg-auto">
+            <a class="nav-link py-2 px-0 px-lg-2" href="{{ url_for('documentation') }}">Documentation</a>
+        </li>
+    </ul>
+{% endblock %}
 
-    {% if completion_tokens or summary %}
-        <h2>Output</h2>
-        <p>Output Word Count: {{ output_word_count }}<br>
-            # of Output Tokens = {{ completion_tokens }}</p>
-        <p>{{ summary }}</p>
-        <hr>
-    {% endif %}
+{% block main %}
+    <div class="teaser">
+        <div class="container-xxl">
+            <div class="col-md-8 mx-auto text-center">
+                <i class="fa-regular fa-file-pdf primary-color my-1 d-block mx-auto mb-3 pub2sum-logo"></i>
+                <h1 class="mb-3 fw-semibold">Summarize any scientific paper with ease!</h1>
 
-    {% if reference_list %}
-        <h2>Reference List</h2>
-        <p>{{ reference_list }}</p>
-    {% endif %}
-</div>
+                <p class="lead mb-4">Say goodbye to troublesome literature research. Automatically summarize papers,
+                    organize them in a concept-centric way, and create citations with just one click.<br>Made available
+                    with state-of-the-art AI.</p>
 
-<script src="{{ url_for('static',filename='js/bootstrap.min.js')}}"></script>
-</body>
+                <div class="d-flex flex-column flex-lg-row align-items-md-stretch justify-content-md-center gap-3 mb-4">
+                    <a href="{{ url_for('summarizer') }}"
+                       class="btn btn-lg btn-primary-color d-flex align-items-center justify-content-center fw-semibold">
+                        <i class="fa-solid fa-pen-nib"></i>&nbsp;Get started
+                    </a>
+
+                    <div class="d-flex align-items-center justify-content-center fw-semibold">
+                        or
+                    </div>
+
+                    <a href="{{ url_for('documentation') }}"
+                       class="btn btn-lg btn-outline-primary-color d-flex align-items-center justify-content-center">
+                        <i class="fa-solid fa-book"></i>&nbsp;Read the docs
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

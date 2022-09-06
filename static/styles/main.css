@@ -1,0 +1,27 @@
+body,
+input {
+    color: #353740;
+}
+
+h1 {
+    line-height: 40px;
+    color: #202123;
+    margin: 16px 0 40px;
+}
+
+.result {
+    margin: 0 auto;
+}
+
+.teaser .pub2sum-logo {
+    font-size: 6rem;
+}
+
+.teaser h1 {
+    font-size: 4rem;
+    line-height: 1;
+}
+
+.teaser .lead {
+    font-size: 1.5rem;
+}
