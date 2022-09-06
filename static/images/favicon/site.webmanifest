@@ -1,0 +1,19 @@
+{
+    "name": "pub2sum",
+    "short_name": "pub2sum",
+    "icons": [
+        {
+            "src": "android-chrome-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "android-chrome-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "theme_color": "#10a37f",
+    "background_color": "#10a37f",
+    "display": "standalone"
+}

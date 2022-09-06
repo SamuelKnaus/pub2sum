@@ -1,0 +1,60 @@
+{% extends "layout.html" %}
+
+{% block title %}Summarizer - pub2sum{% endblock %}
+
+{% block navbar %}
+    <ul class="navbar-nav flex-row flex-wrap bd-navbar-nav">
+        <li class="nav-item col-6 col-lg-auto">
+            <a class="nav-link py-2 px-0 px-lg-2 active" href="/summarizer">Summarizer</a>
+        </li>
+        <li class="nav-item col-6 col-lg-auto">
+            <a class="nav-link py-2 px-0 px-lg-2" href="/documentation">Documentation</a>
+        </li>
+    </ul>
+{% endblock %}
+
+{% block main %}
+    <div class="container-xxl">
+        <div class="col-md-8 mx-auto mb-5">
+            <h1 class="text-center">pub2sum</h1>
+            <p class="lead text-center">Choose or upload file(s) to summarize below.</p>
+
+            <form action="/summarizer" method="post" class="mb-4">
+                <div class="form-floating mb-3">
+                    <input type="text" name="file_name" id="fileNameInput" class="form-control" placeholder="paper.pdf">
+                    <label for="fileNameInput">Enter a file name</label>
+                </div>
+                <button type="submit" class="btn btn-lg btn-primary-color w-100">Submit</button>
+            </form>
+
+            {% if summary %}
+                <div class="scroll-to-results text-center">
+                    <a href="#result-anchor"><i class="fa-solid fa-angles-down"></i></a>
+                </div>
+            {% endif %}
+        </div>
+
+        <div id="result-anchor" class="result pt-5">
+            {% if raw_text_word_count or raw_text_tokens or raw_text %}
+                <h2>Input</h2>
+                <p>Input Word Count = {{ raw_text_word_count }}<br>
+                    # of Tokens ~= {{ raw_text_tokens }}</p>
+                {{ raw_text | safe }}
+                <hr>
+            {% endif %}
+
+            {% if completion_tokens or summary %}
+                <h2>Output</h2>
+                <p>Output Word Count: {{ output_word_count }}<br>
+                    # of Output Tokens = {{ completion_tokens }}</p>
+                <p>{{ summary }}</p>
+                <hr>
+            {% endif %}
+
+            {% if reference_list %}
+                <h2>Reference List</h2>
+                <p>{{ reference_list }}</p>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
