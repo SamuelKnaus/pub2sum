@@ -9,6 +9,8 @@ import openai
 import pdf2doi
 from flask import Flask, render_template, request
 
+from constants import ALLOWED_EXTENSIONS
+
 app = Flask(__name__)
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
