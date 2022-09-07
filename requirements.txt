@@ -29,4 +29,4 @@ layoutparser[ocr]==0.3.4
 layoutparser==0.3.4
 pytesseract==0.3.10
 torchvision==0.13.1
-detectron2 @ git+https://github.com/facebookresearch/detectron2.git@v0.5#egg=detectron2
+git+https://github.com/facebookresearch/detectron2.git@v0.5#egg=detectron2
