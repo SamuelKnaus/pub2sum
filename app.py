@@ -23,9 +23,9 @@ def index():
     return render_template("index.html")
 
 
-@app.route("/documentation", methods=["GET"])
-def documentation():
-    return render_template("documentation.html")
+@app.route("/examples", methods=["GET"])
+def examples():
+    return render_template("examples.html")
 
 
 @app.route("/summarizer", methods=["GET", "POST"])

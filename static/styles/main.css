@@ -4,9 +4,13 @@ input {
 }
 
 h1 {
-    line-height: 40px;
     color: #202123;
-    margin: 16px 0 40px;
+    font-size: 3rem;
+}
+
+.teaser h1 {
+    font-size: 4rem;
+    line-height: 1;
 }
 
 .result {
@@ -15,11 +19,6 @@ h1 {
 
 .teaser .pub2sum-logo {
     font-size: 6rem;
-}
-
-.teaser h1 {
-    font-size: 4rem;
-    line-height: 1;
 }
 
 .teaser .lead {
@@ -35,4 +34,9 @@ h1 {
 .scroll-to-results a:focus,
 .scroll-to-results a:active {
     color: #0e9372;
+}
+
+.navbar-nav .nav-link.active,
+.navbar-nav .show>.nav-link {
+    font-weight: 600;
 }

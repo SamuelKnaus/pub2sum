@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 
-{% block title %}Documentation - pub2sum{% endblock %}
+{% block title %}Examples - pub2sum{% endblock %}
 
 {% block navbar %}
     <ul class="navbar-nav flex-row flex-wrap bd-navbar-nav">
@@ -8,11 +8,14 @@
             <a class="nav-link py-2 px-0 px-lg-2" href="{{ url_for('summarizer') }}">Summarizer</a>
         </li>
         <li class="nav-item col-6 col-lg-auto">
-            <a class="nav-link py-2 px-0 px-lg-2 active" href="{{ url_for('documentation') }}">Documentation</a>
+            <a class="nav-link py-2 px-0 px-lg-2 active" href="{{ url_for('examples') }}">Examples</a>
         </li>
     </ul>
 {% endblock %}
 
 {% block main %}
-    DOCUMENTATION
+    <div class="container-xxl">
+        <h1>Examples</h1>
+        <p class="lead">Test</p>
+    </div>
 {% endblock %}
