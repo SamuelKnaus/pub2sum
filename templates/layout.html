@@ -2,10 +2,10 @@
 
 <!DOCTYPE html>
 <html lang="de">
+
 <head>
-    <title>{% block title %}{% endblock %}</title>
-    {% include "favicons.html" %}
-    {% include "stylesheets.html" %}
+    <title>{% block title %}{% endblock  title %}</title>
+    {% include "head.html" %}
 </head>
 
 <body>
@@ -14,7 +14,6 @@
 
     <main class="py-5 my-5">
         {% block teaser %}{% endblock teaser %}
-
         {% block content %}{% endblock content %}
     </main>
 

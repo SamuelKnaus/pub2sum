@@ -8,10 +8,15 @@ import numpy as np
 import openai
 import pdf2doi
 from flask import Flask, render_template, request
-
-from constants import ALLOWED_EXTENSIONS
+from flask_assets import Environment, Bundle
 
 app = Flask(__name__)
+
+assets = Environment(app)
+assets.url = app.static_url_path
+scss = Bundle('main.scss', filters='libsass', output='main.css')
+assets.register('scss_all', scss)
+
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 pdf2doi.config.set('verbose', False)

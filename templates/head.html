@@ -1,3 +1,6 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <link rel="apple-touch-icon" sizes="180x180"
       href="{{ url_for('static', filename='images/favicon/apple-touch-icon.png') }}">
 <link rel="icon" type="image/png" sizes="32x32"
@@ -11,3 +14,14 @@
 <meta name="msapplication-TileColor" content="#10a37f">
 <meta name="msapplication-config" content="{{ url_for('static', filename='images/favicon/browserconfig.xml') }}">
 <meta name="theme-color" content="#10a37f">
+
+<link rel="stylesheet" href="{{ url_for('static', filename='fontawesome/css/fontawesome.min.css') }}"/>
+<link rel="stylesheet" href="{{ url_for('static', filename='fontawesome/css/brands.css') }}"/>
+<link rel="stylesheet" href="{{ url_for('static', filename='fontawesome/css/solid.css') }}"/>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='/styles/helper.css') }}"/>
+<link rel="stylesheet" href="{{ url_for('static', filename='/styles/header.css') }}"/>
+
+{% assets "scss_all" %}
+    <link rel=stylesheet type=text/css href="{{ ASSET_URL }}">
+{% endassets %}
