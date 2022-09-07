@@ -1,28 +1,14 @@
-body,
-input {
+body {
     color: #353740;
 }
 
-h1 {
-    color: #202123;
-    font-size: 3rem;
-}
-
-.teaser h1 {
-    font-size: 4rem;
-    line-height: 1;
-}
-
-.result {
-    margin: 0 auto;
+.wrapper {
+    max-width: 850px;
+    width: 100%;
 }
 
 .teaser .pub2sum-logo {
     font-size: 6rem;
-}
-
-.teaser .lead {
-    font-size: 1.5rem;
 }
 
 .scroll-to-results a {
