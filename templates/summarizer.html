@@ -27,34 +27,79 @@
                 <button type="submit" class="btn btn-lg btn-primary-color w-100">Submit</button>
             </form>
 
-            {% if summary %}
+            {% if raw_text or summary or reference_list %}
                 <div class="scroll-to-results text-center">
                     <a href="#result-anchor"><i class="fa-solid fa-angles-down"></i></a>
                 </div>
             {% endif %}
         </div>
 
-        <div id="result-anchor" class="result pt-5">
-            {% if raw_text_word_count or raw_text_tokens or raw_text %}
-                <h2>Input</h2>
-                <p>Input Word Count = {{ raw_text_word_count }}<br>
-                    # of Tokens ~= {{ raw_text_tokens }}</p>
-                {{ raw_text | safe }}
-                <hr>
-            {% endif %}
+        {% if raw_text or summary or reference_list %}
+            <div id="result-anchor" class="result col-md-8 pt-5">
+                <h2 class="text-center mb-4">Results</h2>
 
-            {% if completion_tokens or summary %}
-                <h2>Output</h2>
-                <p>Output Word Count: {{ output_word_count }}<br>
-                    # of Output Tokens = {{ completion_tokens }}</p>
-                <p>{{ summary }}</p>
-                <hr>
-            {% endif %}
+                <div class="accordion" id="summarizer-results">
+                    {% if raw_text %}
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="summarizer-raw-input-text">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#summarizer-raw-input-text-panel" aria-expanded="false"
+                                        aria-controls="summarizer-raw-input-text-panel">
+                                    Input
+                                </button>
+                            </h2>
+                            <div id="summarizer-raw-input-text-panel" class="accordion-collapse collapse"
+                                 aria-labelledby="summarizer-raw-input-text">
+                                <div class="accordion-body">
+                                    <code>Input Word Count = {{ raw_text_word_count }}<br>
+                                        # of Tokens ~= {{ raw_text_tokens }}</code>
+                                    <hr>
+                                    {{ raw_text | safe }}
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
 
-            {% if reference_list %}
-                <h2>Reference List</h2>
-                <p>{{ reference_list }}</p>
-            {% endif %}
-        </div>
+                    {% if summary %}
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="summarizer-summary">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#summarizer-summary-panel" aria-expanded="true"
+                                        aria-controls="summarizer-summary-panel">
+                                    Summary
+                                </button>
+                            </h2>
+                            <div id="summarizer-summary-panel" class="accordion-collapse collapse show"
+                                 aria-labelledby="summarizer-summary">
+                                <div class="accordion-body">
+                                    <code>Output Word Count: {{ output_word_count }}<br>
+                                        # of Output Tokens = {{ completion_tokens }}</code>
+                                    <hr>
+                                    <p>{{ summary }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    {% if reference_list %}
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="summarizer-reference-list">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#summarizer-reference-list-panel" aria-expanded="false"
+                                        aria-controls="summarizer-reference-list-panel">
+                                    Reference List
+                                </button>
+                            </h2>
+                            <div id="summarizer-reference-list-panel" class="accordion-collapse collapse"
+                                 aria-labelledby="summarizer-reference-list">
+                                <div class="accordion-body">
+                                    <p>{{ reference_list }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
     </div>
 {% endblock %}
