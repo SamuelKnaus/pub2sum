@@ -1,21 +1,11 @@
 {% extends "layout.html" %}
+{% set active_page = "examples" %}
 
 {% block title %}Examples - pub2sum{% endblock %}
 
-{% block navbar %}
-    <ul class="navbar-nav flex-row flex-wrap bd-navbar-nav">
-        <li class="nav-item col-6 col-lg-auto">
-            <a class="nav-link py-2 px-0 px-lg-2" href="{{ url_for('summarizer') }}">Summarizer</a>
-        </li>
-        <li class="nav-item col-6 col-lg-auto">
-            <a class="nav-link py-2 px-0 px-lg-2 active" href="{{ url_for('examples') }}">Examples</a>
-        </li>
-    </ul>
-{% endblock %}
-
-{% block main %}
+{% block content %}
     <div class="container-xxl">
         <h1>Examples</h1>
         <p class="lead">Test</p>
     </div>
-{% endblock %}
+{% endblock content %}
