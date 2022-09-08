@@ -1,10 +1,10 @@
 <header class="d-flex align-items-center py-2 px-5 fs-5 mb-5 rounded-pill bg-light">
     <a class="navbar-brand fs-4 fw-semibold me-3" href="{{ url_for('index') }}">
-        <i class="fa-regular fa-file-pdf primary-color my-1"></i>
+        <i class="fa-regular fa-file-pdf text-success my-1"></i>
         pub2sum
     </a>
 
-    <ul class="navbar-nav flex-row flex-wrap">
+    <ul class="d-none d-lg-flex navbar-nav flex-row flex-wrap">
         <li class="nav-item col-6 col-lg-auto">
             <a class="nav-link py-2 px-0 px-lg-2{% if active_page == "summarizer" %} active{% endif %}"
                href="{{ url_for('summarizer') }}">Summarizer</a>
@@ -15,7 +15,7 @@
         </li>
     </ul>
 
-    <ul class="navbar-nav flex-row flex-wrap ms-md-auto">
+    <ul class="d-none d-lg-flex navbar-nav flex-row flex-wrap ms-md-auto">
         <li class="nav-item col-6 col-lg-auto">
             <a class="nav-link py-2 px-0 px-lg-2" href="https://github.com/SamuelKnaus/pub2sum"
                target="_blank"

@@ -4,20 +4,27 @@
 <html lang="de">
 
 <head>
-    <title>{% block title %}{% endblock  title %}</title>
+    <title>{% block title %}{% endblock title %}</title>
     {% include "head.html" %}
 </head>
 
 <body>
-<div class="wrapper mx-auto p-3 py-5">
-    {% include "header.html" %}
+<div class="wrapper mx-auto py-5">
+    <div class="container-fluid">
+        {% include "header.html" %}
 
-    <main class="py-5 my-5">
-        {% block teaser %}{% endblock teaser %}
-        {% block content %}{% endblock content %}
-    </main>
+        <main class="py-5 my-5">
+            <div class="teaser col-sm-8 mx-auto text-center mb-5">
+                {% block teaser %}{% endblock teaser %}
+            </div>
 
-    {% include "footer.html" %}
+            <div class="content mb-5">
+                {% block content %}{% endblock content %}
+            </div>
+        </main>
+
+        {% include "footer.html" %}
+    </div>
 </div>
 
 {% include"javascripts.html" %}

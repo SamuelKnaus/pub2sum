@@ -4,26 +4,22 @@
 {% block title %}Summarizer - pub2sum{% endblock %}
 
 {% block teaser %}
-    <div class="teaser mb-5">
-        <div class="col-md-8 mx-auto mb-5">
-            <h1 class="text-center">Summarizer</h1>
-            <p class="lead text-center">Choose or upload your scientific papers here.</p>
+    <h1>Summarizer</h1>
+    <p class="lead mb-5">Upload your scientific papers here. You can analyze a single PDF file or upload a ZIP file
+        containing multiple PDFs at the same time.</p>
 
-            <form action="/summarizer" method="post" class="mb-4">
-                <div class="form-floating mb-3">
-                    <input type="text" name="file_name" id="fileNameInput" class="form-control" placeholder="paper.pdf">
-                    <label for="fileNameInput">Enter a file name</label>
-                </div>
-                <button type="submit" class="btn btn-lg btn-primary w-100">Submit</button>
-            </form>
-
-            {% if raw_text or summary or reference_list %}
-                <div class="scroll-to-results text-center">
-                    <a href="#summarizer-results-section"><i class="fa-solid fa-angles-down"></i></a>
-                </div>
-            {% endif %}
+    <form action="/summarizer" method="post" class="mb-5">
+        <div class=" mb-3">
+            <input class="form-control" type="file" id="summarizer-file-upload">
         </div>
-    </div>
+        <button type="submit" class="btn btn-success w-100">Submit</button>
+    </form>
+
+    {% if raw_text or summary or reference_list %}
+        <div class="scroll-to-results">
+            <a href="#summarizer-results-section"><i class="fa-solid fa-angles-down"></i></a>
+        </div>
+    {% endif %}
 {% endblock teaser %}
 
 {% block content %}
