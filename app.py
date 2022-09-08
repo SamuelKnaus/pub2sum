@@ -10,11 +10,12 @@ from flask_assets import Environment, Bundle
 from pdf2image import convert_from_bytes
 from werkzeug.utils import secure_filename
 
-from constants import UPLOAD_FOLDER, ALLOWED_EXTENSIONS, LAYOUT_MODEL, EXTRA_CONFIG, LABEL_MAP, EXTRACTION_FOLDER
+from constants import TEMPORARY_FOLDER, ALLOWED_EXTENSIONS, LAYOUT_MODEL, EXTRA_CONFIG, LABEL_MAP, EXTRACTION_FOLDER
 from references import get_references
 
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config["TEMPORARY_FOLDER"] = TEMPORARY_FOLDER
+app.config["EXTRACTION_FOLDER"] = EXTRACTION_FOLDER
 
 assets = Environment(app)
 assets.url = app.static_url_path
@@ -23,8 +24,8 @@ assets.register('scss_all', scss)
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-gpt3 = False
-pdf2doi = False
+gpt3 = True
+pdf2doi = True
 
 
 @app.route("/", methods=["GET"])
@@ -49,21 +50,19 @@ def summarizer():
         if file.filename == '':
             print("No selected file")
         if file and allowed_file(file.filename):
-            # Temporarily save file for pdf2doi
-            filename = secure_filename(file.filename)
-            # file.save(os.path.join(app.config['TEMPORARY_FOLDER'], filename))
-            # print(type(file))
-
             if file.content_type == "application/pdf":
-                temporary_path = os.path.join(app.config['UPLOAD_FOLDER'])
-                if not os.path.isdir(temporary_path):
-                    os.makedirs(temporary_path)
+                temporary_folder = app.config["TEMPORARY_FOLDER"]
+                if not os.path.isdir(temporary_folder):
+                    os.makedirs(temporary_folder)
+
+                filename = secure_filename(file.filename)
+                file.save(os.path.join(temporary_folder, filename))
 
                 html_input_text, summary, completion_tokens, reference_list = \
-                    process_pdf(file, os.path.join(temporary_path, filename))
+                    process_pdf(os.path.join(temporary_folder, filename))
                 output_word_count = len(summary.split())
 
-                shutil.rmtree(temporary_path)
+                shutil.rmtree(temporary_folder)
 
                 return render_template("summarizer.html",
                                        html_input_text=html_input_text,
@@ -73,16 +72,17 @@ def summarizer():
                                        reference_list=reference_list)
 
             if file.content_type == "application/zip":
-                unzipped_path = os.path.join(app.config['UPLOAD_FOLDER'], EXTRACTION_FOLDER)
-                if not os.path.isdir(unzipped_path):
-                    os.makedirs(unzipped_path)
+                temporary_folder = app.config["TEMPORARY_FOLDER"]
+                extraction_folder = os.path.join(temporary_folder, app.config["EXTRACTION_FOLDER"])
+                if not os.path.isdir(extraction_folder):
+                    os.makedirs(extraction_folder)
 
                 filename = secure_filename(file.filename)
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                file.save(os.path.join(temporary_folder, filename))
 
-                process_zip(filename, unzipped_path)
+                process_zip(os.path.join(temporary_folder, filename), extraction_folder)
 
-                shutil.rmtree(app.config['UPLOAD_FOLDER'])
+                shutil.rmtree(app.config["TEMPORARY_FOLDER"])
 
     return render_template("summarizer.html")
 
@@ -92,7 +92,7 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-def process_pdf(file, file_path):
+def process_pdf(file_path):
     print("Processing single PDF file...")
 
     request_text = ""
@@ -104,12 +104,11 @@ def process_pdf(file, file_path):
 
     model = lp.Detectron2LayoutModel(LAYOUT_MODEL, extra_config=EXTRA_CONFIG, label_map=LABEL_MAP)
 
-    pdf = file.read()
-    images = convert_from_bytes(pdf)
+    pdf_tokens, pdf_images = lp.load_pdf(file_path, load_images=True)
 
     # for no, image in enumerate(images):
 
-    image = np.array(images[0])
+    image = np.array(pdf_images[0])
     text_blocks = get_text_from_image(model, image)
 
     for txt in text_blocks.get_texts():
@@ -133,19 +132,16 @@ def process_pdf(file, file_path):
     return html_input_text, summary, completion_tokens, reference_list
 
 
-def process_zip(filename, unzipped_path):
+def process_zip(file_path, extraction_path):
     print("Processing ZIP archive...")
 
-    file_source = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    with ZipFile(file_path, 'r') as zipObj:
+        zipObj.extractall(path=extraction_path)
 
-    with ZipFile(file_source, 'r') as zipObj:
-        zipObj.extractall(path=unzipped_path)
-
-    for file in os.listdir(unzipped_path):
-        f = os.path.join(unzipped_path, file)
+    for pdf in os.listdir(extraction_path):
+        f = os.path.join(extraction_path, pdf)
         # checking if it is a file
         if os.path.isfile(f):
-            print(type(file))
             print(f)
 
     print("ZIP archive processed successfully.")

@@ -6,6 +6,7 @@ import pdf2doi
 
 
 def get_references(file_path):
+    print(file_path)
     information = pdf2doi.pdf2doi(file_path)
     identifier_type = information["identifier_type"]
     identifier = information["identifier"]
