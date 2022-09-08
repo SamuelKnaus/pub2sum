@@ -18,4 +18,5 @@ build/
 .DS_STORE
 
 .env
-/static/.webassets-cache/
+static/.webassets-cache/
+temp/
