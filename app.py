@@ -1,4 +1,6 @@
 import os
+import shutil
+from zipfile import ZipFile
 
 import layoutparser as lp
 import numpy as np
@@ -8,7 +10,7 @@ from flask_assets import Environment, Bundle
 from pdf2image import convert_from_bytes
 from werkzeug.utils import secure_filename
 
-from constants import UPLOAD_FOLDER, ALLOWED_EXTENSIONS, LAYOUT_MODEL, EXTRA_CONFIG, LABEL_MAP
+from constants import UPLOAD_FOLDER, ALLOWED_EXTENSIONS, LAYOUT_MODEL, EXTRA_CONFIG, LABEL_MAP, EXTRACTION_FOLDER
 from references import get_references
 
 app = Flask(__name__)
@@ -20,6 +22,9 @@ scss = Bundle('main.scss', filters='libsass', output='main.css')
 assets.register('scss_all', scss)
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
+
+gpt3 = False
+pdf2doi = False
 
 
 @app.route("/", methods=["GET"])
@@ -46,13 +51,19 @@ def summarizer():
         if file and allowed_file(file.filename):
             # Temporarily save file for pdf2doi
             filename = secure_filename(file.filename)
-            # file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            # file.save(os.path.join(app.config['TEMPORARY_FOLDER'], filename))
             # print(type(file))
 
             if file.content_type == "application/pdf":
-                html_input_text, summary, completion_tokens, reference_list = process_pdf(file, os.path.join(
-                    app.config["UPLOAD_FOLDER"], filename))
+                temporary_path = os.path.join(app.config['UPLOAD_FOLDER'])
+                if not os.path.isdir(temporary_path):
+                    os.makedirs(temporary_path)
+
+                html_input_text, summary, completion_tokens, reference_list = \
+                    process_pdf(file, os.path.join(temporary_path, filename))
                 output_word_count = len(summary.split())
+
+                shutil.rmtree(temporary_path)
 
                 return render_template("summarizer.html",
                                        html_input_text=html_input_text,
@@ -62,8 +73,16 @@ def summarizer():
                                        reference_list=reference_list)
 
             if file.content_type == "application/zip":
-                print("Processing ZIP archive...")
-                process_zip(file)
+                unzipped_path = os.path.join(app.config['UPLOAD_FOLDER'], EXTRACTION_FOLDER)
+                if not os.path.isdir(unzipped_path):
+                    os.makedirs(unzipped_path)
+
+                filename = secure_filename(file.filename)
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+                process_zip(filename, unzipped_path)
+
+                shutil.rmtree(app.config['UPLOAD_FOLDER'])
 
     return render_template("summarizer.html")
 
@@ -78,15 +97,16 @@ def process_pdf(file, file_path):
 
     request_text = ""
     html_input_text = ""
+    summary = ""
+    completion_tokens = 0
     reference_list = ""
     tldr_tag = "\ntl;dr:"
 
     model = lp.Detectron2LayoutModel(LAYOUT_MODEL, extra_config=EXTRA_CONFIG, label_map=LABEL_MAP)
 
     pdf = file.read()
-    print(type(pdf))
     images = convert_from_bytes(pdf)
-    print(type(images))
+
     # for no, image in enumerate(images):
 
     image = np.array(images[0])
@@ -97,19 +117,37 @@ def process_pdf(file, file_path):
         html_input_text += "<p>" + txt + "</p>"
     request_text += tldr_tag
 
-    response = generate_summary_from_text(request_text)
-    summary = response.choices[0].text[:-1]
-    completion_tokens = response.usage.completion_tokens
-    references = get_references(file_path)
-    summary += " " + references[0]
-    reference_list += references[1]
+    if gpt3:
+        response = generate_summary_from_text(request_text)
+
+        summary = response.choices[0].text[:-1]
+        completion_tokens = response.usage.completion_tokens
+
+    if pdf2doi:
+        references = get_references(file_path)
+        summary += " " + references[0]
+        reference_list += references[1]
 
     print("Single PDF processed successfully.")
 
     return html_input_text, summary, completion_tokens, reference_list
 
 
-def process_zip(file):
+def process_zip(filename, unzipped_path):
+    print("Processing ZIP archive...")
+
+    file_source = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+
+    with ZipFile(file_source, 'r') as zipObj:
+        zipObj.extractall(path=unzipped_path)
+
+    for file in os.listdir(unzipped_path):
+        f = os.path.join(unzipped_path, file)
+        # checking if it is a file
+        if os.path.isfile(f):
+            print(type(file))
+            print(f)
+
     print("ZIP archive processed successfully.")
 
 
