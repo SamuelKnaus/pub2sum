@@ -7,7 +7,6 @@ import numpy as np
 import openai
 from flask import Flask, render_template, request
 from flask_assets import Environment, Bundle
-from pdf2image import convert_from_bytes
 from werkzeug.utils import secure_filename
 
 from constants import TEMPORARY_FOLDER, ALLOWED_EXTENSIONS, LAYOUT_MODEL, EXTRA_CONFIG, LABEL_MAP, EXTRACTION_FOLDER
