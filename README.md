@@ -8,6 +8,10 @@ This is a summary generator app which can be used to create authentic summaries 
 
 2. Clone this repository
 
+   ```bash
+   $ git clone https://github.com/SamuelKnaus/pub2sum.git
+   ```
+
 3. Navigate into the project directory
 
    ```bash
