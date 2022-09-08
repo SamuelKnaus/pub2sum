@@ -9,8 +9,9 @@
         containing multiple PDFs at the same time.</p>
 
     <form action="/summarizer" method="post" class="mb-5">
-        <div class=" mb-3">
-            <input class="form-control" type="file" id="summarizer-file-upload">
+        <div class="form-floating mb-3">
+            <input type="text" name="file_name" id="fileNameInput" class="form-control" placeholder="paper.pdf">
+            <label for="fileNameInput">Enter a file name</label>
         </div>
         <button type="submit" class="btn btn-success w-100">Submit</button>
     </form>
