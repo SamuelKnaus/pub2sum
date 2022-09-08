@@ -22,7 +22,7 @@ def fetch_bibliography(identifier_type, identifier):
     if identifier_type == "DOI":
         inline_item = "Could not find reference for " + identifier
         bibliography_item = "Could not find reference for " + identifier
-        request_url = "https://doi.org/" + identifier
+        request_url = "http://dx.doi.org/" + identifier
 
         bib_request = urllib.request.Request(request_url)
         bib_request.add_header('Accept', 'text/x-bibliography')
