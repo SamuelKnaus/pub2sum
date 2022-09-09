@@ -1,0 +1,9 @@
+{% extends "docs/docs_layout.html" %}
+{% set active_page = "docs" %}
+{% set active_docs_page = "model_parameters" %}
+
+{% block title %}Parameters - pub2sum{% endblock title %}
+
+{% block content %}
+    {{ parameters | markdown }}
+{% endblock content %}

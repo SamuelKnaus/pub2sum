@@ -24,6 +24,7 @@ tqdm==4.62.3
 urllib3==1.26.7
 Werkzeug==2.0.2
 
+Markdown==3.4.1
 Flask-Assets==2.0
 libsass==0.21.0
 pdf2doi==1.3

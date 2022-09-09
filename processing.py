@@ -1,3 +1,4 @@
+import os
 from zipfile import ZipFile
 
 import layoutparser as lp

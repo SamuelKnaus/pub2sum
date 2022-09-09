@@ -1,10 +1,10 @@
-<ul class="nav nav-tabs justify-content-center">
+<ul class="nav nav-tabs border-0 justify-content-center">
     <li class="nav-item">
         <a class="nav-link{% if active_docs_page == "getting_started" %} active{% endif %}"
            href="{{ url_for('getting_started') }}"><i class="fa-solid fa-wrench"></i>&nbsp;Getting Started</a>
     </li>
     <li class="nav-item">
         <a class="nav-link {% if active_docs_page == "model_parameters" %} active{% endif %}"
-           href="{{ url_for('model_parameters') }}"><i class="fa-solid fa-sliders"></i>&nbsp;Parameters</a>
+           href="{{ url_for('settings') }}"><i class="fa-solid fa-sliders"></i>&nbsp;Settings</a>
     </li>
 </ul>

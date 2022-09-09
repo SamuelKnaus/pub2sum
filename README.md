@@ -1,46 +1,46 @@
-# pub2sum Quickstart
+# Getting Started
 
-This is a summary generator app which can be used to create authentic summaries from scientific literature. It uses the [Flask](https://flask.palletsprojects.com/en/2.0.x/) web framework together with the [Layout Parser](https://layout-parser.github.io/) document analysis framework and the [GPT-3](https://openai.com/api/) language model from OpenAI. Check out the instructions below to get set up.
+This is a summary generator app which can be used to create authentic summaries from scientific literature. It uses
+the [Flask](https://flask.palletsprojects.com/en/2.0.x/) web framework together with
+the [Layout Parser](https://layout-parser.github.io/) document analysis framework and
+the [GPT-3](https://openai.com/api/) language model from OpenAI. Check out the instructions below to get set up.
+
+## Prerequisites
+
+- Linux-based operating system (e.g., MacOS or Ubuntu)
+- Python >= 3.10 [ from here](https://www.python.org/downloads/)
 
 ## Setup
 
-1. Install Python >= 3.10 [ from here](https://www.python.org/downloads/)
-
-2. Clone this repository
-
+1. Clone this repository<br/>
    ```bash
    $ git clone https://github.com/SamuelKnaus/pub2sum.git
    ```
 
-3. Navigate into the project directory
-
+2. Navigate into the project directory<br/>
    ```bash
    $ cd pub2sum
    ```
 
-4. Create a new virtual environment
-
+3. Create a new virtual environment<br/>
    ```bash
    $ python -m venv venv
    $ . venv/bin/activate
    ```
 
-5. Install the requirements
-
+4. Install the requirements<br/>
    ```bash
    $ pip install -r requirements.txt
    ```
 
-6. Make a copy of the example environment variables file
-
+5. Make a copy of the example environment variables file<br/>
    ```bash
    $ cp .env.example .env
    ```
 
-7. Add your [API key](https://beta.openai.com/account/api-keys) to the newly created `.env` file
+6. Add your [API key](https://beta.openai.com/account/api-keys) to the newly created `.env` file
 
-8. Run the app
-
+7. Run the app<br/>
    ```bash
    $ flask run
    ```

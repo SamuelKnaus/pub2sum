@@ -4,8 +4,8 @@
 {% block title %}Summarizer - pub2sum{% endblock %}
 
 {% block teaser %}
-    <h1>Summarizer</h1>
-    <p class="lead mb-5">Upload your scientific papers here. You can analyze a single PDF file or upload a ZIP file
+    <h1 class="mb-3"><i class="fa-solid fa-pen-nib text-success"></i>&nbsp;Summarizer</h1>
+    <p class="lead mb-4">Upload your scientific papers here. You can analyze a single PDF file or upload a ZIP file
         containing multiple PDFs at the same time.</p>
 
     <form action="{{ url_for('summarizer') }}" method="post" enctype="multipart/form-data" class="mb-5">

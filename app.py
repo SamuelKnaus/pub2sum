@@ -1,9 +1,11 @@
 import os
 import shutil
 
+import markdown
 import openai
 from flask import Flask, render_template, request
 from flask_assets import Environment, Bundle
+from flaskext.markdown import Markdown
 from werkzeug.utils import secure_filename
 
 from constants import TEMPORARY_FOLDER, EXTRACTION_FOLDER
@@ -11,6 +13,8 @@ from helpers import allowed_file
 from processing import process_pdf, process_zip
 
 app = Flask(__name__)
+
+Markdown(app)
 
 assets = Environment(app)
 assets.url = app.static_url_path
@@ -74,12 +78,14 @@ def summarizer():
 
 @app.route("/docs/getting-started", methods=["GET"])
 def getting_started():
-    return render_template("docs/getting_started.html")
+    readme = markdown.markdown(open("README.md", "r").read())
+    return render_template("docs/getting_started.html", readme=readme)
 
 
-@app.route("/docs/model-parameters", methods=["GET"])
-def model_parameters():
-    return render_template("docs/model_parameters.html")
+@app.route("/docs/settings", methods=["GET"])
+def settings():
+    parameters = markdown.markdown(open("documentation/settings.md", "r").read())
+    return render_template("docs/settings.html", parameters=parameters)
 
 
 @app.route("/examples", methods=["GET"])
