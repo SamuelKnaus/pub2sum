@@ -25,11 +25,6 @@ def index():
     return render_template("index.html")
 
 
-@app.route("/examples", methods=["GET"])
-def examples():
-    return render_template("examples.html")
-
-
 @app.route("/summarizer", methods=["GET", "POST"])
 def summarizer():
     if request.method == "POST":
@@ -75,3 +70,18 @@ def summarizer():
                 shutil.rmtree(TEMPORARY_FOLDER)
 
     return render_template("summarizer.html")
+
+
+@app.route("/docs/getting-started", methods=["GET"])
+def getting_started():
+    return render_template("docs/getting_started.html")
+
+
+@app.route("/docs/model-parameters", methods=["GET"])
+def model_parameters():
+    return render_template("docs/model_parameters.html")
+
+
+@app.route("/examples", methods=["GET"])
+def examples():
+    return render_template("examples.html")

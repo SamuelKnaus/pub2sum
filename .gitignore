@@ -20,3 +20,4 @@ build/
 .env
 static/.webassets-cache/
 temp/
+static/main.css

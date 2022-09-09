@@ -13,6 +13,8 @@
     <div class="container-fluid">
         {% include "header.html" %}
 
+        {% block subnavigation %}{% endblock subnavigation %}
+
         <main class="py-5 my-5">
             <div class="teaser col-sm-8 mx-auto text-center mb-5">
                 {% block teaser %}{% endblock teaser %}
