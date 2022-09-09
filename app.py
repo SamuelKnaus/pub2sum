@@ -48,18 +48,18 @@ def summarizer():
                 filename = secure_filename(file.filename)
                 file.save(os.path.join(TEMPORARY_FOLDER, filename))
 
-                html_input_text, summary, completion_tokens, reference_list = \
+                paragraphs, summary, completion_tokens, references = \
                     process_pdf(os.path.join(TEMPORARY_FOLDER, filename))
                 output_word_count = len(summary.split())
 
                 shutil.rmtree(TEMPORARY_FOLDER)
 
                 return render_template("summarizer.html",
-                                       html_input_text=html_input_text,
+                                       paragraphs=paragraphs,
                                        output_word_count=output_word_count,
                                        completion_tokens=completion_tokens,
                                        summary=summary,
-                                       reference_list=reference_list)
+                                       references=references)
 
             if file.content_type == "application/zip":
                 extraction_folder = os.path.join(TEMPORARY_FOLDER, EXTRACTION_FOLDER)

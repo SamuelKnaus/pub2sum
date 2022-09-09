@@ -12,12 +12,10 @@ from references import get_references
 def process_pdf(file_path):
     print("Processing single PDF file...")
 
-    request_text = ""
-    html_input_text = ""
+    input_text = ""
     summary = ""
     completion_tokens = 0
-    reference_list = ""
-    tldr_tag = "\ntl;dr:"
+    references = ""
 
     model = lp.Detectron2LayoutModel(LAYOUT_MODEL, extra_config=EXTRA_CONFIG, label_map=LABEL_MAP)
 
@@ -28,13 +26,13 @@ def process_pdf(file_path):
     image = np.array(pdf_images[0])
     text_blocks = get_text_from_image(model, image)
 
-    for txt in text_blocks.get_texts():
-        request_text += txt
-        html_input_text += "<p>" + txt + "</p>"
-    request_text += tldr_tag
+    paragraphs = text_blocks.get_texts()
+
+    for paragraph in paragraphs:
+        input_text += paragraph
 
     if SUMMARIZE:
-        response = generate_summary_from_text(request_text)
+        response = generate_summary_from_text(input_text + "\ntl;dr:")
 
         summary = response.choices[0].text[:-1]
         completion_tokens = response.usage.completion_tokens
@@ -42,11 +40,11 @@ def process_pdf(file_path):
     if REFERENCES:
         references = get_references(file_path)
         summary += " " + references[0]
-        reference_list += references[1]
+        references += references[1]
 
     print("Single PDF processed successfully.")
 
-    return html_input_text, summary, completion_tokens, reference_list
+    return paragraphs, summary, completion_tokens, references
 
 
 def process_zip(file_path, extraction_path):

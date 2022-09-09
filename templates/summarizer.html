@@ -13,20 +13,20 @@
         <button type="submit" class="btn btn-success w-100">Summarize</button>
     </form>
 
-    {% if raw_text or summary or reference_list %}
-        <div class="scroll-to-results">
+    {% if paragraphs or summary or references %}
+        <div class="scroll-to-results mb-5">
             <a href="#summarizer-results-section"><i class="fa-solid fa-angles-down"></i></a>
         </div>
     {% endif %}
 {% endblock teaser %}
 
 {% block content %}
-    {% if raw_text or summary or reference_list %}
+    {% if paragraphs or summary or references %}
         <div id="summarizer-results-section" class="results">
             <h2 class="text-center mb-4">Results</h2>
 
             <div class="accordion" id="summarizer-results-accordion">
-                {% if html_input_text %}
+                {% if paragraphs %}
                     <div class="accordion-item">
                         <h2 class="accordion-header" id="summarizer-raw-input-text">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
@@ -38,7 +38,9 @@
                         <div id="summarizer-raw-input-text-panel" class="accordion-collapse collapse"
                              aria-labelledby="summarizer-raw-input-text">
                             <div class="accordion-body">
-                                {{ html_input_text | safe }}
+                                {% for paragraph in paragraphs %}
+                                    <p>{{ paragraph }}</p>
+                                {% endfor %}
                             </div>
                         </div>
                     </div>
@@ -56,7 +58,7 @@
                         <div id="summarizer-summary-panel" class="accordion-collapse collapse show"
                              aria-labelledby="summarizer-summary">
                             <div class="accordion-body">
-                                <code>Word Count: {{ output_word_count }} ({{ completion_tokens }} Tokens)</code>
+                                <pre>Word Count: {{ output_word_count }} ({{ completion_tokens }} Tokens)</pre>
                                 <hr>
                                 <p>{{ summary }}</p>
                             </div>
@@ -64,7 +66,7 @@
                     </div>
                 {% endif %}
 
-                {% if reference_list %}
+                {% if references %}
                     <div class="accordion-item">
                         <h2 class="accordion-header" id="summarizer-reference-list">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
@@ -76,7 +78,7 @@
                         <div id="summarizer-reference-list-panel" class="accordion-collapse collapse"
                              aria-labelledby="summarizer-reference-list">
                             <div class="accordion-body">
-                                <p>{{ reference_list }}</p>
+                                <p>{{ references }}</p>
                             </div>
                         </div>
                     </div>

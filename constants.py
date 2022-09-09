@@ -3,7 +3,7 @@
 """
 
 SUMMARIZE = False
-REFERENCES = True
+REFERENCES = False
 
 TEMPORARY_FOLDER = "temp"
 EXTRACTION_FOLDER = "unzipped"
