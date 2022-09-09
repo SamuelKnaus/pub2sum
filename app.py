@@ -50,15 +50,13 @@ def summarizer():
 
                 paragraphs, summary, completion_tokens, references = \
                     process_pdf(os.path.join(TEMPORARY_FOLDER, filename))
-                output_word_count = len(summary.split())
 
                 shutil.rmtree(TEMPORARY_FOLDER)
 
                 return render_template("summarizer.html",
-                                       paragraphs=paragraphs,
-                                       output_word_count=output_word_count,
+                                       input_texts=paragraphs,
                                        completion_tokens=completion_tokens,
-                                       summary=summary,
+                                       summaries=summary,
                                        references=references)
 
             if file.content_type == "application/zip":
@@ -69,9 +67,16 @@ def summarizer():
                 filename = secure_filename(file.filename)
                 file.save(os.path.join(TEMPORARY_FOLDER, filename))
 
-                process_zip(os.path.join(TEMPORARY_FOLDER, filename), extraction_folder)
+                input_texts, summaries, completion_tokens, references = process_zip(
+                    os.path.join(TEMPORARY_FOLDER, filename), extraction_folder)
 
                 shutil.rmtree(TEMPORARY_FOLDER)
+
+                return render_template("summarizer.html",
+                                       input_texts=input_texts,
+                                       completion_tokens=completion_tokens,
+                                       summaries=summaries,
+                                       references=references)
 
     return render_template("summarizer.html")
 

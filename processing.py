@@ -10,8 +10,9 @@ from references import get_references
 
 
 def process_pdf(file_path):
-    print("Processing single PDF file...")
+    print("Processing " + file_path + "...")
 
+    item = []
     input_text = ""
     summary = ""
     completion_tokens = 0
@@ -38,28 +39,50 @@ def process_pdf(file_path):
         completion_tokens = response.usage.completion_tokens
 
     if REFERENCES:
-        references = get_references(file_path)
-        summary += " " + references[0]
-        references += references[1]
+        reference_items = get_references(file_path)
+        summary += " " + reference_items[0]
+        references += reference_items[1]
 
-    print("Single PDF processed successfully.")
+    item.extend([paragraphs, summary, completion_tokens, references])
 
-    return paragraphs, summary, completion_tokens, references
+    print(file_path + " processed successfully.")
+
+    return item
 
 
 def process_zip(file_path, extraction_path):
-    print("Processing ZIP archive...")
+    print("Processing " + file_path + "...")
+
+    items = []
+    input_texts = []
+    summaries = []
+    completion_tokens = 0
+    references = []
 
     with ZipFile(file_path, 'r') as zipObj:
         zipObj.extractall(path=extraction_path)
 
     for pdf in os.listdir(extraction_path):
-        f = os.path.join(extraction_path, pdf)
+        current_file_path = os.path.join(extraction_path, pdf)
         # checking if it is a file
-        if os.path.isfile(f):
-            print(f)
+        if os.path.isfile(current_file_path):
+            current_paragraphs, current_summary, current_completion_tokens, current_references = process_pdf(
+                current_file_path)
+            if current_paragraphs:
+                input_texts.append(current_paragraphs)
+            if current_summary:
+                summaries.append(current_summary)
+            if current_completion_tokens:
+                completion_tokens += current_completion_tokens
+            if current_references:
+                references.append(current_references)
 
-    print("ZIP archive processed successfully.")
+    references = sorted(references)
+    items.extend([input_texts, summaries, completion_tokens, references])
+
+    print(file_path + " processed successfully.")
+
+    return items
 
 
 def get_text_from_image(model, image):

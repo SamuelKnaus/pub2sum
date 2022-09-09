@@ -13,7 +13,7 @@
         <button type="submit" class="btn btn-success w-100">Summarize</button>
     </form>
 
-    {% if paragraphs or summary or references %}
+    {% if input_texts or summaries or references %}
         <div class="scroll-to-results mb-5">
             <a href="#summarizer-results-section"><i class="fa-solid fa-angles-down"></i></a>
         </div>
@@ -21,12 +21,12 @@
 {% endblock teaser %}
 
 {% block content %}
-    {% if paragraphs or summary or references %}
+    {% if input_texts or summaries or references %}
         <div id="summarizer-results-section" class="results">
             <h2 class="text-center mb-4">Results</h2>
 
             <div class="accordion" id="summarizer-results-accordion">
-                {% if paragraphs %}
+                {% if input_texts %}
                     <div class="accordion-item">
                         <h2 class="accordion-header" id="summarizer-raw-input-text">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
@@ -38,15 +38,18 @@
                         <div id="summarizer-raw-input-text-panel" class="accordion-collapse collapse"
                              aria-labelledby="summarizer-raw-input-text">
                             <div class="accordion-body">
-                                {% for paragraph in paragraphs %}
-                                    <p>{{ paragraph }}</p>
+                                {% for input_text in input_texts %}
+                                    {% for paragraph in input_text %}
+                                        <p>{{ paragraph }}</p>
+                                    {% endfor %}
+                                    <hr/>
                                 {% endfor %}
                             </div>
                         </div>
                     </div>
                 {% endif %}
 
-                {% if summary %}
+                {% if summaries %}
                     <div class="accordion-item">
                         <h2 class="accordion-header" id="summarizer-summary">
                             <button class="accordion-button" type="button" data-bs-toggle="collapse"
@@ -58,9 +61,11 @@
                         <div id="summarizer-summary-panel" class="accordion-collapse collapse show"
                              aria-labelledby="summarizer-summary">
                             <div class="accordion-body">
-                                <pre>Word Count: {{ output_word_count }} ({{ completion_tokens }} Tokens)</pre>
+                                <pre>{{ completion_tokens }} Tokens used</pre>
                                 <hr>
-                                <p>{{ summary }}</p>
+                                {% for summary in summaries %}
+                                    <p>{{ summary }}</p>
+                                {% endfor %}
                             </div>
                         </div>
                     </div>
@@ -78,7 +83,11 @@
                         <div id="summarizer-reference-list-panel" class="accordion-collapse collapse"
                              aria-labelledby="summarizer-reference-list">
                             <div class="accordion-body">
-                                <p>{{ references }}</p>
+                                <ul>
+                                    {% for reference in references %}
+                                        <li>{{ reference }}</li>
+                                    {% endfor %}
+                                </ul>
                             </div>
                         </div>
                     </div>
