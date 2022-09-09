@@ -2,7 +2,7 @@
     Contains project wide constants
 """
 
-SUMMARIZE = True
+SUMMARIZE = False
 REFERENCES = True
 
 TEMPORARY_FOLDER = "temp"

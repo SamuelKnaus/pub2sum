@@ -1,12 +1,10 @@
 import json
-import urllib.request
-from urllib.error import HTTPError
 
 import pdf2doi
+import requests
 
 
 def get_references(file_path):
-    print(file_path)
     information = pdf2doi.pdf2doi(file_path)
     identifier_type = information["identifier_type"]
     identifier = information["identifier"]
@@ -16,47 +14,39 @@ def get_references(file_path):
     if references:
         return references
 
-    return "Could not find reference!"
+    return "Could not find reference(s)."
 
 
 def fetch_bibliography(identifier_type, identifier):
     if identifier_type == "DOI":
-        inline_item = "Could not find reference for " + identifier
-        bibliography_item = "Could not find reference for " + identifier
-        request_url = "http://dx.doi.org/" + identifier
+        inline_item = "(Could not find reference for " + identifier + ")"
+        bib_item = "Could not find reference for " + identifier + ""
+        request_url = "https://dx.doi.org/" + identifier
 
-        bib_request = urllib.request.Request(request_url)
-        bib_request.add_header('Accept', 'text/x-bibliography')
-        bib_request.add_header('style', 'apa-6th-edition')
+        bib_headers = {"Accept": "text/x-bibliography", "style": "apa-6th-edition"}
+        bib_request = requests.get(request_url, headers=bib_headers)
+        if bib_request.text:
+            bib_item = bib_request.text
 
-        inline_request = urllib.request.Request(request_url)
-        inline_request.add_header('Accept', 'application/vnd.citationstyles.csl+json')
+        inline_headers = {"Accept": "application/vnd.citationstyles.csl+json"}
+        inline_request = requests.get(request_url, headers=inline_headers)
+        if inline_request.text:
+            inline_response = json.loads(inline_request.text)
+            authors = inline_response["author"]
 
-        try:
-            with urllib.request.urlopen(bib_request) as f:
-                bibliography_item = f.read().decode()
+            if len(authors) == 1:
+                inline_item = " (" + authors[0]["family"] + ", " \
+                              + str(inline_response["published-print"]["date-parts"][0][0]) + ")."
 
-            with urllib.request.urlopen(inline_request) as f:
-                inline_response = json.loads(f.read().decode())
-                authors = inline_response["author"]
-                if len(authors) == 1:
-                    inline_item = " (" + authors[0]["family"] + ", " \
-                                  + str(inline_response["published-print"]["date-parts"][0][0]) + ")."
+            if len(authors) == 2:
+                inline_item = " (" + authors[0]["family"] + " & " + authors[1]["family"] + ", " \
+                              + str(inline_response["published-print"]["date-parts"][0][0]) + ")."
 
-                if len(authors) == 2:
-                    inline_item = " (" + authors[0]["family"] + " & " + authors[1]["family"] + ", " \
-                                  + str(inline_response["published-print"]["date-parts"][0][0]) + ")."
+            if len(authors) > 2:
+                inline_item = " (" + authors[0]["family"] + " et al., " \
+                              + str(inline_response["published-print"]["date-parts"][0][0]) + ")."
 
-                if len(authors) > 2:
-                    inline_item = " (" + authors[0]["family"] + " et al., " \
-                                  + str(inline_response["published-print"]["date-parts"][0][0]) + ")."
-        except HTTPError as e:
-            if e.code == 404:
-                print('DOI not found.')
-            else:
-                print('Service unavailable.')
-
-        return inline_item, bibliography_item
+        return inline_item, bib_item
 
     if identifier_type == "arxiv ID":
         # request_url = "http://export.arxiv.org/api/query?id_list=" + identifier
@@ -64,7 +54,7 @@ def fetch_bibliography(identifier_type, identifier):
         # dictionary = xmltodict.parse(response.read())
 
         # title = dictionary["feed"]["entry"]["title"]
-        title = "arXiv reference - work in progress"
+        title = "(arXiv reference - work in progress)"
 
         return title
 
