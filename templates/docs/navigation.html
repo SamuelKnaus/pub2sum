@@ -3,8 +3,19 @@
         <a class="nav-link{% if active_docs_page == "getting_started" %} active{% endif %}"
            href="{{ url_for('getting_started') }}"><i class="fa-solid fa-wrench"></i>&nbsp;Getting Started</a>
     </li>
+
+    <li class="nav-item">
+        <a class="nav-link {% if active_docs_page == "how_it_works" %} active{% endif %}"
+           href="{{ url_for('how_it_works') }}"><i class="fa-solid fa-question"></i>&nbsp;How it Works</a>
+    </li>
+
     <li class="nav-item">
         <a class="nav-link {% if active_docs_page == "model_parameters" %} active{% endif %}"
            href="{{ url_for('settings') }}"><i class="fa-solid fa-sliders"></i>&nbsp;Settings</a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link {% if active_docs_page == "under_the_hood" %} active{% endif %}"
+           href="{{ url_for('under_the_hood') }}"><i class="fa-solid fa-gears"></i>&nbsp;Under the Hood</a>
     </li>
 </ul>

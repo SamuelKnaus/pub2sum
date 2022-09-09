@@ -87,14 +87,29 @@ def summarizer():
 
 @app.route("/docs/getting-started", methods=["GET"])
 def getting_started():
-    readme = markdown.markdown(open("README.md", "r").read())
-    return render_template("docs/getting_started.html", readme=readme)
+    page_content = markdown.markdown(open("README.md", "r").read())
+    return render_template("docs/getting_started.html", page_content=page_content)
+
+
+@app.route("/docs/how-it-works", methods=["GET"])
+def how_it_works():
+    # page_content = markdown.markdown(open("documentation/settings.md", "r").read())
+    # return render_template("docs/how_it_works.html", page_content=page_content)
+    return render_template("docs/how_it_works.html")
 
 
 @app.route("/docs/settings", methods=["GET"])
 def settings():
-    parameters = markdown.markdown(open("documentation/settings.md", "r").read())
-    return render_template("docs/settings.html", parameters=parameters)
+    # page_content = markdown.markdown(open("documentation/settings.md", "r").read())
+    # return render_template("docs/settings.html", page_content=page_content)
+    return render_template("docs/settings.html")
+
+
+@app.route("/docs/under-the-hood", methods=["GET"])
+def under_the_hood():
+    # page_content = markdown.markdown(open("documentation/settings.md", "r").read())
+    # return render_template("docs/settings.html", page_content=page_content)
+    return render_template("docs/under_the_hood.html")
 
 
 @app.route("/examples", methods=["GET"])
