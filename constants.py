@@ -2,6 +2,9 @@
     Contains project wide constants
 """
 
+SUMMARIZE = True
+REFERENCES = True
+
 TEMPORARY_FOLDER = "temp"
 EXTRACTION_FOLDER = "unzipped"
 ALLOWED_EXTENSIONS = {"pdf", "zip"}
