@@ -10,7 +10,7 @@
 
     <form action="{{ url_for('summarizer') }}" method="post" enctype="multipart/form-data" class="mb-5">
         <input type="file" name="file" id="summarizer-file-upload" class="form-control mb-3">
-        <button type="submit" class="btn btn-success w-100">Summarize</button>
+        <button type="submit" id="summarize-files" class="btn btn-success w-100">Summarize</button>
     </form>
 
     {% if input_texts or summaries or references %}
