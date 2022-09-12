@@ -1,11 +1,9 @@
 import os
 import shutil
 
-import markdown
 import openai
 from flask import Flask, render_template, request
 from flask_assets import Environment, Bundle
-from flaskext.markdown import Markdown
 from werkzeug.utils import secure_filename
 
 from constants import TEMPORARY_FOLDER, EXTRACTION_FOLDER
@@ -13,8 +11,6 @@ from helpers import allowed_file
 from processing import process_pdf, process_zip
 
 app = Flask(__name__)
-
-Markdown(app)
 
 assets = Environment(app)
 assets.url = app.static_url_path
@@ -87,28 +83,21 @@ def summarizer():
 
 @app.route("/docs/getting-started", methods=["GET"])
 def getting_started():
-    page_content = markdown.markdown(open("README.md", "r").read())
-    return render_template("docs/getting_started.html", page_content=page_content)
+    return render_template("docs/getting_started.html")
 
 
 @app.route("/docs/how-it-works", methods=["GET"])
 def how_it_works():
-    # page_content = markdown.markdown(open("documentation/settings.md", "r").read())
-    # return render_template("docs/how_it_works.html", page_content=page_content)
     return render_template("docs/how_it_works.html")
 
 
 @app.route("/docs/settings", methods=["GET"])
 def settings():
-    # page_content = markdown.markdown(open("documentation/settings.md", "r").read())
-    # return render_template("docs/settings.html", page_content=page_content)
     return render_template("docs/settings.html")
 
 
 @app.route("/docs/under-the-hood", methods=["GET"])
 def under_the_hood():
-    # page_content = markdown.markdown(open("documentation/settings.md", "r").read())
-    # return render_template("docs/settings.html", page_content=page_content)
     return render_template("docs/under_the_hood.html")
 
 
