@@ -26,7 +26,7 @@ def fetch_bibliography(identifier_type, identifier):
         bib_headers = {"Accept": "text/x-bibliography", "style": "apa-6th-edition"}
         bib_request = requests.get(request_url, headers=bib_headers)
         if bib_request.text:
-            bib_item = bib_request.text
+            bib_item = str(bib_request.content.decode("utf-8"))
 
         inline_headers = {"Accept": "application/vnd.citationstyles.csl+json"}
         inline_request = requests.get(request_url, headers=inline_headers)
