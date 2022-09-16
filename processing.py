@@ -20,7 +20,7 @@ def process_pdf(file_path):
 
     model = lp.Detectron2LayoutModel(LAYOUT_MODEL, extra_config=EXTRA_CONFIG, label_map=LABEL_MAP)
 
-    pdf_tokens, pdf_images = lp.load_pdf(file_path, load_images=True)
+    pdf_tokens, pdf_images = lp.load_pdf(file_path, load_images=True, dpi=216)
 
     # for no, image in enumerate(images):
 
