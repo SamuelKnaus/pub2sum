@@ -17,20 +17,22 @@ def process_pdf(file_path):
     summary = ""
     completion_tokens = 0
     references = ""
+    paragraphs = []
 
     model = lp.Detectron2LayoutModel(LAYOUT_MODEL, extra_config=EXTRA_CONFIG, label_map=LABEL_MAP)
 
     pdf_tokens, pdf_images = lp.load_pdf(file_path, load_images=True, dpi=216)
 
-    # for no, image in enumerate(images):
+    for image in pdf_images:
+        image = np.array(image)
+        text_blocks = get_text_from_image(model, image)
 
-    image = np.array(pdf_images[0])
-    text_blocks = get_text_from_image(model, image)
+        page_paragraphs = text_blocks.get_texts()
 
-    paragraphs = text_blocks.get_texts()
+        paragraphs.append(page_paragraphs)
 
-    for paragraph in paragraphs:
-        input_text += paragraph
+        for page_paragraph in page_paragraphs:
+            input_text += page_paragraph
 
     if SUMMARIZE:
         response = generate_summary_from_text(input_text + "\ntl;dr:")
