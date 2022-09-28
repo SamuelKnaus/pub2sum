@@ -20,12 +20,16 @@ def process_pdf(file_path):
     paragraphs = []
 
     model = lp.Detectron2LayoutModel(LAYOUT_MODEL, extra_config=EXTRA_CONFIG, label_map=LABEL_MAP)
+    ocr_agent = lp.TesseractAgent(languages='eng')
 
     pdf_tokens, pdf_images = lp.load_pdf(file_path, load_images=True, dpi=216)
 
+    i = 1
     for image in pdf_images:
+        if i > 2:
+            break
         image = np.array(image)
-        text_blocks = get_text_from_image(model, image)
+        text_blocks = get_text_from_image(model, image, ocr_agent)
 
         page_paragraphs = text_blocks.get_texts()
 
@@ -33,6 +37,8 @@ def process_pdf(file_path):
 
         for page_paragraph in page_paragraphs:
             input_text += page_paragraph
+
+        i += 1
 
     if SUMMARIZE:
         response = generate_summary_from_text(input_text + "\ntl;dr:")
@@ -87,7 +93,7 @@ def process_zip(file_path, extraction_path):
     return items
 
 
-def get_text_from_image(model, image):
+def get_text_from_image(model, image, ocr_agent):
     layout = model.detect(image)
     lp.draw_box(image, layout, box_width=3)
 
@@ -111,8 +117,6 @@ def get_text_from_image(model, image):
     lp.draw_box(image, text_blocks,
                 box_width=3,
                 show_element_id=True)
-
-    ocr_agent = lp.TesseractAgent(languages='eng')
 
     for block in text_blocks:
         segment_image = (block

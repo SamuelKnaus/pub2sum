@@ -39,8 +39,10 @@
                              aria-labelledby="summarizer-raw-input-text">
                             <div class="accordion-body">
                                 {% for input_text in input_texts %}
-                                    {% for paragraph in input_text %}
-                                        <p>{{ paragraph }}</p>
+                                    {% for pages in input_text %}
+                                        {% for paragraph in pages %}
+                                            <p>{{ paragraph }}</p>
+                                        {% endfor %}
                                     {% endfor %}
                                     <hr/>
                                 {% endfor %}
