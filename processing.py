@@ -4,6 +4,7 @@ from zipfile import ZipFile
 import layoutparser as lp
 import numpy as np
 import openai
+from PyPDF2 import PdfReader
 
 from constants import LAYOUT_MODEL, EXTRA_CONFIG, LABEL_MAP, SUMMARIZE, REFERENCES
 from references import get_references
@@ -19,17 +20,39 @@ def process_pdf(file_path):
     references = ""
     paragraphs = []
 
+    # start, end = find_discussion(file_path)
+    # print(str(start) + " - " + str(end))
+
     model = lp.Detectron2LayoutModel(LAYOUT_MODEL, extra_config=EXTRA_CONFIG, label_map=LABEL_MAP)
     ocr_agent = lp.TesseractAgent(languages='eng')
 
     pdf_tokens, pdf_images = lp.load_pdf(file_path, load_images=True, dpi=216)
 
-    i = 1
+    # discussion_part_images = pdf_images[start:end]
+
     for image in pdf_images:
-        if i > 2:
-            break
         image = np.array(image)
         text_blocks = get_text_from_image(model, image, ocr_agent)
+
+        print(text_blocks)
+
+        # CUSTOM
+        relevant_blocks = []
+
+        for text_block in text_blocks:
+            if text_block.type == 'Title' and text_block.text in ['Discussion', 'DISCUSSION']:
+                break
+            else:
+                text_blocks.remove(text_block)
+
+        for text_block in text_blocks:
+            if text_block.type == 'Title' and text_block.text in ['References', 'REFERENCES']:
+                break
+            else:
+                relevant_blocks.append(text_block)
+
+        print(relevant_blocks)
+        # CUSTOM
 
         page_paragraphs = text_blocks.get_texts()
 
@@ -37,8 +60,6 @@ def process_pdf(file_path):
 
         for page_paragraph in page_paragraphs:
             input_text += page_paragraph
-
-        i += 1
 
     if SUMMARIZE:
         response = generate_summary_from_text(input_text + "\ntl;dr:")
@@ -98,6 +119,7 @@ def get_text_from_image(model, image, ocr_agent):
     lp.draw_box(image, layout, box_width=3)
 
     text_blocks = lp.Layout([b for b in layout if b.type == 'Text' or b.type == 'Title'])
+
     figure_blocks = lp.Layout([b for b in layout if b.type == 'Figure'])
     text_blocks = lp.Layout([b for b in text_blocks
                              if not any(b.is_in(b_fig) for b_fig in figure_blocks)])
@@ -119,6 +141,7 @@ def get_text_from_image(model, image, ocr_agent):
                 show_element_id=True)
 
     for block in text_blocks:
+        print(block)
         segment_image = (block
                          .pad(left=5, right=5, top=5, bottom=5)
                          .crop_image(image))
@@ -138,3 +161,30 @@ def generate_summary_from_text(request_text):
     )
 
     return response
+
+
+def find_discussion(file_path):
+    reader = PdfReader(file_path)
+    number_of_pages = len(reader.pages)
+
+    start = -1
+    end = -1
+    discussion_locs = [-1]
+    references_locs = [-1]
+
+    for page_number in range(number_of_pages):
+        page = reader.pages[page_number]
+        text = page.extract_text()
+        discussion_result = text.find("Discussion")
+        references_result = text.find("References")
+
+        if discussion_result > -1:
+            discussion_locs.append(page_number + 1)
+
+        if references_result > -1:
+            references_locs.append(page_number + 1)
+
+        start = discussion_locs[-1] - 1
+        end = references_locs[-1] + 1
+
+    return start, end

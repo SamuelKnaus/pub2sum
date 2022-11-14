@@ -2,8 +2,8 @@
     Contains project wide constants
 """
 
-SUMMARIZE = True
-REFERENCES = True
+SUMMARIZE = False
+REFERENCES = False
 
 TEMPORARY_FOLDER = "temp"
 EXTRACTION_FOLDER = "unzipped"
