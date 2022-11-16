@@ -42,8 +42,10 @@ def summarizer():
             if file.content_type == "text/rtf":
                 input_text = rtf_to_text(file.read().decode('utf-8'))
                 items = process_text(input_text)
-                
-                return render_template("summarizer.html", items=items)
+            if file.content_type == "text/plain":
+                input_text = file.read().decode('utf-8')
+                items = process_text(input_text)
+            return render_template("summarizer.html", items=items)
         else:
             flash("Please select a text file for upload")
             return redirect(request.url)
