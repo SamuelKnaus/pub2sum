@@ -40,11 +40,11 @@ def summarizer():
             return redirect(url_for('summarizer'))
         if file and allowed_file(file.filename):
             if file.content_type == "text/rtf":
-                input_text = rtf_to_text(file.read().decode('utf-8'))
-                items = process_text(input_text)
+                raw_input = rtf_to_text(file.read().decode('utf-8'))
+                items = process_text(raw_input)
             if file.content_type == "text/plain":
-                input_text = file.read().decode('utf-8')
-                items = process_text(input_text)
+                raw_input = file.read().decode('utf-8')
+                items = process_text(raw_input)
             return render_template("summarizer.html", items=items)
         else:
             flash("Please select a text file for upload")
