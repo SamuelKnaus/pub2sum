@@ -5,6 +5,10 @@ import requests
 def get_references(identifier):
     reference, reference_short, reference_list = fetch_bibliography(identifier)
 
+    reference = "a"
+    reference_short = "b"
+    reference_list = "c"
+
     if reference or reference_short or reference_list:
         return reference, reference_short, reference_list
 
@@ -20,21 +24,22 @@ def fetch_bibliography(identifier):
     # Reference
     reference_headers = {"Accept": "application/vnd.citationstyles.csl+json"}
     reference_request = requests.get(request_url, headers=reference_headers)
+
     if reference_request.text:
         reference_response = json.loads(reference_request.text)
         authors = reference_response["author"]
 
         if len(authors) == 1:
             reference = " (" + authors[0]["family"] + ", " \
-                          + str(reference_response["published-print"]["date-parts"][0][0]) + ")."
+                        + str(reference_response["published-print"]["date-parts"][0][0]) + ")."
 
         if len(authors) == 2:
             reference = " (" + authors[0]["family"] + " & " + authors[1]["family"] + ", " \
-                          + str(reference_response["published-print"]["date-parts"][0][0]) + ")."
+                        + str(reference_response["published-print"]["date-parts"][0][0]) + ")."
 
         if len(authors) > 2:
             reference = " (" + authors[0]["family"] + " et al., " \
-                          + str(reference_response["published-print"]["date-parts"][0][0]) + ")."
+                        + str(reference_response["published-print"]["date-parts"][0][0]) + ")."
 
     # Reference short
     reference_short = "et. al TBD"

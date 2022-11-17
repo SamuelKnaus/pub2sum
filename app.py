@@ -7,7 +7,7 @@ from striprtf.striprtf import rtf_to_text
 
 from constants import SECRET_KEY
 from helpers import allowed_file
-from processing import process_text
+from processing import process_file
 
 app = Flask(__name__)
 app.secret_key = SECRET_KEY
@@ -39,16 +39,15 @@ def summarizer():
             flash("Please select a file")
             return redirect(url_for('summarizer'))
         if file and allowed_file(file.filename):
-            if file.content_type == "text/rtf":
-                raw_input = rtf_to_text(file.read().decode('utf-8'))
-                items = process_text(raw_input)
             if file.content_type == "text/plain":
-                raw_input = file.read().decode('utf-8')
-                items = process_text(raw_input)
-            return render_template("summarizer.html", items=items)
-        else:
-            flash("Please select a text file for upload")
+                items = process_file(file)
+                return render_template("summarizer.html", items=items)
+
+            flash("Wrong file format. Please upload plain .txt file")
             return redirect(request.url)
+
+        flash("Please select a text file for upload")
+        return redirect(request.url)
 
     return render_template("summarizer.html")
 

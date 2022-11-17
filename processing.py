@@ -1,15 +1,15 @@
 import openai
 
-from constants import SUMMARIZE, REFERENCES
+from constants import SUMMARIZE, REFERENCES, DELIMITER
 from references import get_references
 
 
-def process_text(raw_input):
+def process_file(file):
+    raw_text = file.read().decode("utf-8")
+    texts = raw_text.split(DELIMITER)
     items = []
-    raw_input_texts = raw_input.split("/******/")
 
-    for index, input_text in enumerate(raw_input_texts):
-        identifier, text = input_text.split('\r\n', 1)
+    for index, text in enumerate(texts):
         item = {
             "input_text": None,
             "summary": None,
@@ -19,12 +19,14 @@ def process_text(raw_input):
             "reference_list": None
         }
 
+        identifier, text = text.strip().split("\n", 1)
+
         if SUMMARIZE:
             response = get_text_summary(text)
             summary = response.choices[0].text[:-1]
             completion_tokens = response.usage.completion_tokens
 
-            item["input_text"] = input_text
+            item["input_text"] = text
             item["summary"] = summary
             item["completion_tokens"] = completion_tokens
 
