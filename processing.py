@@ -20,13 +20,13 @@ def process_file(file):
         }
 
         identifier, text = text.strip().split("\n", 1)
+        item["input_text"] = text
 
         if SUMMARIZE:
             response = get_text_summary(text)
             summary = response.choices[0].text[:-1]
             completion_tokens = response.usage.completion_tokens
 
-            item["input_text"] = text
             item["summary"] = summary
             item["completion_tokens"] = completion_tokens
 

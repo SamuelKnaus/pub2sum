@@ -3,7 +3,6 @@ import os
 import openai
 from flask import Flask, flash, request, redirect, url_for, render_template
 from flask_assets import Environment, Bundle
-from striprtf.striprtf import rtf_to_text
 
 from constants import SECRET_KEY
 from helpers import allowed_file

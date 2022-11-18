@@ -5,10 +5,6 @@ import requests
 def get_references(identifier):
     reference, reference_short, reference_list = fetch_bibliography(identifier)
 
-    reference = "a"
-    reference_short = "b"
-    reference_list = "c"
-
     if reference or reference_short or reference_list:
         return reference, reference_short, reference_list
 
