@@ -4,7 +4,7 @@
 {% block title %}ROUGE - pub2sum{% endblock %}
 
 {% block teaser %}
-    <h1 class="mb-3"><i class="fa-solid fa-code-compare"></i>&nbsp;ROUGE Toolkit</h1>
+    <h1 class="mb-3"><i class="fa-solid fa-code-compare text-success"></i>&nbsp;ROUGE Toolkit</h1>
     <p class="lead mb-4">Evaluate a generated summary against a reference summary using the ROUGE toolkit measures.</p>
 
     <form action="{{ url_for('rouge') }}" method="post" class="mb-5">
@@ -47,13 +47,6 @@
                         {{ score }}
                     </li>
                 {% endfor %}
-                <li class="list-group-item">
-                    <div class="fw-bold"></div>
-                    Precision: {{ scores["rouge1"][0] }}<br>
-                    Recall: {{ scores["rouge1"][1] }}<br>
-                    F-measure {{ scores["rouge1"][2] }}
-                </li>
-
             </ul>
         </div>
     {% endif %}
