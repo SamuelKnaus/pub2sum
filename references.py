@@ -12,12 +12,11 @@ def get_references(identifier):
 
 
 def fetch_bibliography(identifier):
-    reference = ""
-    reference_short = ""
-    reference_list = ""
+    first_reference = ""
+    continuing_reference = ""
+    reference_list_entry = ""
     request_url = identifier
 
-    # Reference
     reference_headers = {"Accept": "application/vnd.citationstyles.csl+json"}
     reference_request = requests.get(request_url, headers=reference_headers)
 
@@ -25,25 +24,38 @@ def fetch_bibliography(identifier):
         reference_response = json.loads(reference_request.text)
         authors = reference_response["author"]
 
+        # First Reference
+        if len(authors) >= 6:
+            first_reference = authors[0]["family"] + " et al., " + str(
+                reference_response["published-print"]["date-parts"][0][0])
+        else:
+            for index, author in enumerate(authors):
+                if index == len(authors) - 1 and len(authors) > 1:
+                    first_reference += " & " + author["family"]
+                else:
+                    if index == 0:
+                        first_reference += author["family"]
+                    else:
+                        first_reference += ", " + author["family"]
+            first_reference += ", " + str(reference_response["published-print"]["date-parts"][0][0])
+
+        # Continuing reference
         if len(authors) == 1:
-            reference = " (" + authors[0]["family"] + ", " \
-                        + str(reference_response["published-print"]["date-parts"][0][0]) + ")."
+            continuing_reference = authors[0]["family"] + ", " + str(
+                reference_response["published-print"]["date-parts"][0][0])
 
         if len(authors) == 2:
-            reference = " (" + authors[0]["family"] + " & " + authors[1]["family"] + ", " \
-                        + str(reference_response["published-print"]["date-parts"][0][0]) + ")."
+            continuing_reference = authors[0]["family"] + " & " + authors[1]["family"] + ", " + str(
+                reference_response["published-print"]["date-parts"][0][0])
 
         if len(authors) > 2:
-            reference = " (" + authors[0]["family"] + " et al., " \
-                        + str(reference_response["published-print"]["date-parts"][0][0]) + ")."
+            continuing_reference = authors[0]["family"] + " et al., " + str(
+                reference_response["published-print"]["date-parts"][0][0])
 
-    # Reference short
-    reference_short = "et. al TBD"
+    # Reference list entry
+    reference_list_entry_headers = {"Accept": "text/x-bibliography", "style": "apa-6th-edition"}
+    reference_list_entry_request = requests.get(request_url, headers=reference_list_entry_headers)
+    if reference_list_entry_request.text:
+        reference_list_entry = str(reference_list_entry_request.content.decode("utf-8"))
 
-    # Reference list
-    reference_list_headers = {"Accept": "text/x-bibliography", "style": "apa-6th-edition"}
-    reference_list_request = requests.get(request_url, headers=reference_list_headers)
-    if reference_list_request.text:
-        reference_list = str(reference_list_request.content.decode("utf-8"))
-
-    return reference, reference_short, reference_list
+    return first_reference, continuing_reference, reference_list_entry

@@ -31,11 +31,11 @@ def process_file(file):
             item["completion_tokens"] = completion_tokens
 
         if REFERENCES:
-            reference, reference_short, reference_list = get_references(identifier)
+            first_reference, continuing_reference, reference_list_entry = get_references(identifier)
 
-            item["reference"] = reference
-            item["reference_short"] = reference_short
-            item["reference_list"] = reference_list
+            item["first_reference"] = first_reference
+            item["continuing_reference"] = continuing_reference
+            item["reference_list_entry"] = reference_list_entry
 
         items.append(item)
 

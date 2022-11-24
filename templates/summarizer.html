@@ -36,8 +36,11 @@
 
             {% for item in items %}
                 <div class="item mb-4">
-                    <h3>Item {{ loop.index }}</h3>
-
+                    {% if item["first_reference"] %}
+                        <h3 class="mb-3"><i class="fa-regular fa-file-lines"></i> {{ item["first_reference"] }}</h3>
+                    {% else %}
+                        <h3>Item {{ loop.index }}</h3>
+                    {% endif %}
                     <div class="accordion" id="summarizer-results-accordion-{{ loop.index }}">
                         {% if item["input_text"] %}
                             <div class="accordion-item">
@@ -81,7 +84,7 @@
                             </div>
                         {% endif %}
 
-                        {% if item["reference"] %}
+                        {% if item["first_reference"] or item["continuing_reference"] or item["reference_list_entry"] %}
                             <div class="accordion-item">
                                 <h2 class="accordion-header" id="summarizer-reference-{{ loop.index }}">
                                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
@@ -95,9 +98,18 @@
                                      class="accordion-collapse collapse"
                                      aria-labelledby="summarizer-reference-{{ loop.index }}">
                                     <div class="accordion-body">
-                                        <p>{{ item["reference"] }}</p>
-                                        <p>{{ item["reference_short"] }}</p>
-                                        <p>{{ item["reference_list"] }}</p>
+                                        {% if item["first_reference"] %}
+                                            <p class="fw-bold">First reference:</p>
+                                            <pre>({{ item["first_reference"] }})</pre>
+                                        {% endif %}
+                                        {% if item["continuing_reference"] %}
+                                            <p class="fw-bold">Continuing reference:</p>
+                                            <pre>({{ item["continuing_reference"] }})</pre>
+                                        {% endif %}
+                                        {% if item["reference_list_entry"] %}
+                                            <p class="fw-bold">Reference list item:</p>
+                                            <pre>{{ item["reference_list_entry"] }}.</pre>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>
