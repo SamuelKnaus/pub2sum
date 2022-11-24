@@ -23,6 +23,13 @@ body {
       padding: 15.5px;
       cursor: pointer;
     }
+
+    &.copied {
+      &::after {
+        font: var(--fa-font-solid);
+        content: "\f058";
+      }
+    }
   }
 
   .icon::before {

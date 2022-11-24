@@ -3,5 +3,7 @@ jQuery("#summarize-files").click(function () {
 });
 
 jQuery("pre").after().click(function () {
-    console.log(jQuery(this).text())
+    jQuery("pre").removeClass("copied")
+    navigator.clipboard.writeText(jQuery(this).text())
+    jQuery(this).addClass("copied")
 })
