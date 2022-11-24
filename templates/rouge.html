@@ -41,10 +41,13 @@
         <div id="rouge-results-section" class="results">
             <h2 class="text-center mb-5">Results</h2>
 
-            <ul class="list-group">
-                {% for score in scores %}
-                    <li class="list-group-item">
-                        {{ score }}
+            <ul class="list-group list-group-horizontal">
+                {% for scoreName, scoreValues in scores.items() %}
+                    <li class="list-group-item flex-fill text-center">
+                        <h3>{{ scoreName }}</h3>
+                        Precision: {{ scoreValues["precision"] }}<br>
+                        Recall: {{ scoreValues["recall"] }}<br>
+                        F-measure {{ scoreValues["fmeasure"] }}
                     </li>
                 {% endfor %}
             </ul>
