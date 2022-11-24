@@ -1,0 +1,60 @@
+{% extends "layout.html" %}
+{% set active_page = "rouge" %}
+
+{% block title %}ROUGE - pub2sum{% endblock %}
+
+{% block teaser %}
+    <h1 class="mb-3"><i class="fa-solid fa-code-compare"></i>&nbsp;ROUGE Toolkit</h1>
+    <p class="lead mb-4">Evaluate a generated summary against a reference summary using the ROUGE toolkit measures.</p>
+
+    <form action="{{ url_for('rouge') }}" method="post" class="mb-5">
+        <label for="reference-summary">Reference</label>
+        <textarea id="reference-summary" class="form-control mb-3" name="reference-summary" cols="35"
+                  rows="4"></textarea>
+
+        <label for="generated-summary">Generated Summary</label>
+        <textarea id="generated-summary" class="form-control mb-3" name="generated-summary" cols="35"
+                  rows="4"></textarea>
+
+        <button type="submit" id="summarize-files" class="btn btn-success w-100">Evaluate</button>
+    </form>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-warning" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {% if scores %}
+        <div class="scroll-to-results mb-5">
+            <a href="#rouge-results-section"><i class="fa-solid fa-angles-down"></i></a>
+        </div>
+    {% endif %}
+{% endblock teaser %}
+
+{% block content %}
+    {% if scores %}
+        <div id="rouge-results-section" class="results">
+            <h2 class="text-center mb-5">Results</h2>
+
+            <ul class="list-group">
+                {% for score in scores %}
+                    <li class="list-group-item">
+                        {{ score }}
+                    </li>
+                {% endfor %}
+                <li class="list-group-item">
+                    <div class="fw-bold"></div>
+                    Precision: {{ scores["rouge1"][0] }}<br>
+                    Recall: {{ scores["rouge1"][1] }}<br>
+                    F-measure {{ scores["rouge1"][2] }}
+                </li>
+
+            </ul>
+        </div>
+    {% endif %}
+{% endblock content %}

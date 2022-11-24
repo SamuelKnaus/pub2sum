@@ -2,6 +2,7 @@ import openai
 
 from constants import SUMMARIZE, REFERENCES, DELIMITER
 from references import get_references
+from rouge_score import rouge_scorer
 
 
 def process_file(file):
@@ -50,3 +51,9 @@ def get_text_summary(request_text):
         max_tokens=200
     )
     return response
+
+
+def calculate_scores(reference_summary, generated_summary):
+    scorer = rouge_scorer.RougeScorer(['rouge1', 'rougeL'], use_stemmer=True)
+    scores = scorer.score(reference_summary, generated_summary)
+    return scores

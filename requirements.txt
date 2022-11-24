@@ -26,3 +26,4 @@ Werkzeug==2.0.2
 
 Flask-Assets==2.0
 libsass==0.21.0
+rouge-score==0.1.2

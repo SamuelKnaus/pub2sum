@@ -6,7 +6,7 @@ from flask_assets import Environment, Bundle
 
 from constants import SECRET_KEY
 from helpers import allowed_file
-from processing import process_file
+from processing import process_file, calculate_scores
 
 app = Flask(__name__)
 app.secret_key = SECRET_KEY
@@ -51,6 +51,27 @@ def summarizer():
     return render_template("summarizer.html")
 
 
+@app.route("/rouge", methods=["GET", "POST"])
+def rouge():
+    if request.method == "POST":
+        reference_summary = request.form["reference-summary"]
+        generated_summary = request.form["generated-summary"]
+
+        if not reference_summary:
+            flash("Please provide a summary for reference")
+            return redirect(request.url)
+
+        if not generated_summary:
+            flash("Please provide a generated summary")
+            return redirect(request.url)
+
+        scores = calculate_scores(reference_summary, generated_summary)
+
+        return render_template("rouge.html", scores=scores)
+
+    return render_template("rouge.html")
+
+
 @app.route("/docs/getting-started", methods=["GET"])
 def getting_started():
     return render_template("docs/getting_started.html")
@@ -69,8 +90,3 @@ def settings():
 @app.route("/docs/under-the-hood", methods=["GET"])
 def under_the_hood():
     return render_template("docs/under_the_hood.html")
-
-
-@app.route("/examples", methods=["GET"])
-def examples():
-    return render_template("examples.html")
