@@ -100,15 +100,15 @@
                                     <div class="accordion-body">
                                         {% if item["first_reference"] %}
                                             <p class="fw-bold">First reference:</p>
-                                            <pre>({{ item["first_reference"] }})</pre>
+                                            <pre class="ref">({{ item["first_reference"] }})</pre>
                                         {% endif %}
                                         {% if item["continuing_reference"] %}
                                             <p class="fw-bold">Continuing reference:</p>
-                                            <pre>({{ item["continuing_reference"] }})</pre>
+                                            <pre class="ref">({{ item["continuing_reference"] }})</pre>
                                         {% endif %}
                                         {% if item["reference_list_entry"] %}
                                             <p class="fw-bold">Reference list item:</p>
-                                            <pre>{{ item["reference_list_entry"] }}</pre>
+                                            <pre class="ref">{{ item["reference_list_entry"] }}</pre>
                                         {% endif %}
                                     </div>
                                 </div>

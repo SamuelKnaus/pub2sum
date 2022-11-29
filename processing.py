@@ -1,6 +1,6 @@
 import openai
 
-from constants import SUMMARIZE, REFERENCES, DELIMITER
+from constants import SUMMARIZE, REFERENCES, DELIMITER, INSTRUCTION
 from references import get_references
 from rouge_score import rouge_scorer
 
@@ -44,12 +44,18 @@ def process_file(file):
 
 
 def get_text_summary(request_text):
+    prompt = INSTRUCTION + "\n\n" + request_text
+
     response = openai.Completion.create(
-        model="text-davinci-002",
-        prompt=request_text,
-        temperature=0,
-        max_tokens=200
+        model="text-davinci-003",
+        prompt=prompt,
+        temperature=0.1,
+        max_tokens=400,
+        top_p=1,
+        frequency_penalty=0.8,
+        presence_penalty=0.6
     )
+
     return response
 
 
