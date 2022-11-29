@@ -29,7 +29,7 @@
         {% endif %}
     {% endwith %}
 
-    {% if scores %}
+    {% if result_item %}
         <div class="scroll-to-results mb-5">
             <a href="#rouge-results-section"><i class="fa-solid fa-angles-down"></i></a>
         </div>
@@ -37,20 +37,79 @@
 {% endblock teaser %}
 
 {% block content %}
-    {% if scores %}
+    {% if result_item %}
         <div id="rouge-results-section" class="results">
             <h2 class="text-center mb-5">Results</h2>
 
-            <ul class="list-group list-group-horizontal">
-                {% for scoreName, scoreValues in scores.items() %}
-                    <li class="list-group-item flex-fill text-center">
-                        <h3>{{ scoreName }}</h3>
-                        Precision: {{ scoreValues["precision"] }}<br>
-                        Recall: {{ scoreValues["recall"] }}<br>
-                        F-measure {{ scoreValues["fmeasure"] }}
-                    </li>
-                {% endfor %}
-            </ul>
+
+            <div class="accordion" id="rouge-results-accordion">
+                {% if result_item["reference_summary"] %}
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="rouge-reference-summary">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#rouge-reference-summary-panel"
+                                    aria-expanded="false"
+                                    aria-controls="rouge-reference-summary-panel">
+                                Reference Summary
+                            </button>
+                        </h2>
+                        <div id="rouge-reference-summary-panel"
+                             class="accordion-collapse collapse"
+                             aria-labelledby="rouge-reference-summary">
+                            <div class="accordion-body">
+                                <p>{{ result_item["reference_summary"] }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if result_item["generated_summary"] %}
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="rouge-generated-summary">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#rouge-generated-summary-panel"
+                                    aria-expanded="false"
+                                    aria-controls="rouge-generated-summary-panel">
+                                Generated Summary
+                            </button>
+                        </h2>
+                        <div id="rouge-generated-summary-panel"
+                             class="accordion-collapse collapse"
+                             aria-labelledby="rouge-generated-summary">
+                            <div class="accordion-body">
+                                <p>{{ result_item["generated_summary"] }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if result_item["scores"] %}
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="rouge-scores">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#rouge-scores-panel"
+                                    aria-expanded="true"
+                                    aria-controls="rouge-scores-panel">
+                                ROUGE Scores
+                            </button>
+                        </h2>
+                        <div id="rouge-scores-panel"
+                             class="accordion-collapse collapse show"
+                             aria-labelledby="rouge-scores">
+                            <div class="accordion-body">
+                                {% for scoreName, scoreValues in result_item["scores"].items() %}
+                                    <h3>{{ scoreName }}</h3>
+                                    <p>
+                                        Precision: {{ scoreValues["precision"] }}<br>
+                                        Recall: {{ scoreValues["recall"] }}<br>
+                                        F-measure {{ scoreValues["fmeasure"] }}
+                                    </p>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
         </div>
     {% endif %}
 {% endblock content %}

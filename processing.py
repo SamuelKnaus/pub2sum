@@ -60,7 +60,15 @@ def get_text_summary(request_text):
 
 
 def calculate_scores(reference_summary, generated_summary):
+    result_item = {
+        "reference_summary": reference_summary,
+        "generated_summary": generated_summary,
+        "scores": None
+    }
+
     scorer = rouge_scorer.RougeScorer(['rouge1', 'rougeL'], use_stemmer=True)
     scores = scorer.score(reference_summary, generated_summary)
 
-    return scores
+    result_item["scores"] = scores
+
+    return result_item

@@ -65,9 +65,9 @@ def rouge():
             flash("Please provide a generated summary")
             return redirect(request.url)
 
-        scores = calculate_scores(reference_summary, generated_summary)
+        result_item = calculate_scores(reference_summary, generated_summary)
 
-        return render_template("rouge.html", scores=scores)
+        return render_template("rouge.html", result_item=result_item)
 
     return render_template("rouge.html")
 
