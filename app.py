@@ -1,7 +1,7 @@
 import os
 
 import openai
-from flask import Flask, flash, request, redirect, url_for, render_template
+from flask import Flask, flash, request, redirect, url_for, render_template, make_response
 from flask_assets import Environment, Bundle
 
 from constants import SECRET_KEY
@@ -39,8 +39,22 @@ def summarizer():
             return redirect(url_for('summarizer'))
         if file and allowed_file(file.filename):
             if file.content_type == "text/plain":
-                items = process_file(file)
-                return render_template("summarizer.html", items=items)
+                items = process_file(request, file)
+                response = make_response(render_template("summarizer.html",
+                                                         summarize_text=request.form.getlist("summarize_text"),
+                                                         fetch_references=request.form.getlist("fetch_references"),
+                                                         items=items))
+                if request.form.getlist("summarize_text"):
+                    response.set_cookie("summarize_text", "1")
+                else:
+                    response.set_cookie("summarize_text", "1", expires=0)
+
+                if request.form.getlist("fetch_references"):
+                    response.set_cookie("fetch_references", "1")
+                else:
+                    response.set_cookie("fetch_references", "1",  expires=0)
+
+                return response
 
             flash("Wrong file format. Please upload plain .txt file")
             return redirect(request.url)
@@ -48,7 +62,9 @@ def summarizer():
         flash("Please select a text file for upload")
         return redirect(request.url)
 
-    return render_template("summarizer.html")
+    return render_template("summarizer.html",
+                           summarize_text=request.cookies.get("summarize_text"),
+                           fetch_references=request.cookies.get("fetch_references"))
 
 
 @app.route("/rouge", methods=["GET", "POST"])

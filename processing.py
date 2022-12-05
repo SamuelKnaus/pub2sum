@@ -1,11 +1,11 @@
 import openai
-
-from constants import SUMMARIZE_TEXT, FETCH_REFERENCES, DELIMITER, INSTRUCTION
-from references import get_references
 from rouge_score import rouge_scorer
 
+from constants import DELIMITER, INSTRUCTION
+from references import get_references
 
-def process_file(file):
+
+def process_file(request, file):
     raw_text = file.read().decode("utf-8")
     texts = raw_text.split(DELIMITER)
     items = []
@@ -23,7 +23,8 @@ def process_file(file):
         identifier, text = text.strip().split("\n", 1)
         item["input_text"] = text
 
-        if SUMMARIZE_TEXT:
+        if (request.form.getlist("summarize_text") and request.cookies.get("summarize_text")) or (
+                request.form.getlist("summarize_text") and not request.cookies.get("summarize_text")):
             response = get_text_summary(text)
             summary = response.choices[0].text[:-1]
             completion_tokens = response.usage.completion_tokens
@@ -31,7 +32,8 @@ def process_file(file):
             item["summary"] = summary
             item["completion_tokens"] = completion_tokens
 
-        if FETCH_REFERENCES:
+        if request.form.getlist("fetch_references") and request.cookies.get("fetch_references") or (
+                request.form.getlist("fetch_references") and not request.cookies.get("fetch_references")):
             first_reference, continuing_reference, reference_list_entry = get_references(identifier)
 
             item["first_reference"] = first_reference

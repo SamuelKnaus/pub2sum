@@ -1,3 +1,7 @@
+##########################################################
+### Required by OpenAI Python API Quickstart #############
+### https://github.com/openai/openai-quickstart-python ###
+##########################################################
 autopep8==1.6.0
 certifi==2021.10.8
 charset-normalizer==2.0.7
@@ -8,10 +12,10 @@ idna==3.3
 itsdangerous==2.0.1
 Jinja2==3.0.2
 MarkupSafe==2.0.1
-numpy==1.22.0
+numpy==1.21.3
 openai==0.19.0
 openpyxl==3.0.9
-pandas==1.3.4
+pandas==1.3.5
 pandas-stubs==1.2.0.35
 pycodestyle==2.8.0
 python-dateutil==2.8.2
@@ -24,6 +28,9 @@ tqdm==4.62.3
 urllib3==1.26.7
 Werkzeug==2.0.2
 
+##########################################################
+### Additional software specific requirements ############
+##########################################################
 Flask-Assets==2.0
-libsass==0.21.0
+libsass==0.22.0
 rouge-score==0.1.2

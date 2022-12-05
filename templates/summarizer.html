@@ -8,7 +8,28 @@
     <p class="lead mb-4">Upload your scientific texts here to summarize them.</p>
 
     <form action="{{ url_for('summarizer') }}" method="post" enctype="multipart/form-data" class="mb-5">
-        <input type="file" name="file" id="summarizer-file-upload" class="form-control mb-3">
+        <input class="form-control mb-3" type="file" name="file" id="summarizer-file-upload">
+
+        <div class="form-check mb-3">
+            {% if summarize_text %}
+                <input class="form-check-input" type="checkbox" id="summarize_text" name="summarize_text" value="1"
+                       checked>
+            {% else %}
+                <input class="form-check-input" type="checkbox" id="summarize_text" name="summarize_text" value="1">
+            {% endif %}
+            <label class="form-check-label" for="summarize_text"> Summarize text</label>
+        </div>
+
+        <div class="form-check mb-3">
+            {% if fetch_references %}
+                <input class="form-check-input" type="checkbox" id="fetch_references" name="fetch_references" value="1"
+                       checked>
+            {% else %}
+                <input class="form-check-input" type="checkbox" id="fetch_references" name="fetch_references" value="1">
+            {% endif %}
+            <label class="form-check-label" for="fetch_references"> Fetch references</label>
+        </div>
+
         <button type="submit" id="summarize-files" class="btn btn-success w-100">Summarize</button>
     </form>
 
