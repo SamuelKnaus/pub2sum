@@ -52,7 +52,7 @@ def get_text_summary(request_text):
         model="text-davinci-003",
         prompt=prompt,
         temperature=0.1,
-        max_tokens=400,
+        max_tokens=300,
         top_p=1,
         frequency_penalty=0.8,
         presence_penalty=0.6
