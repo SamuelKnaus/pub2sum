@@ -4,8 +4,8 @@
 {% block title %}ROUGE - pub2sum{% endblock %}
 
 {% block teaser %}
-    <h1 class="mb-3"><i class="fa-solid fa-code-compare text-success"></i>&nbsp;ROUGE Toolkit</h1>
-    <p class="lead mb-4">Evaluate a generated summary against a reference summary using the ROUGE toolkit measures.</p>
+    <h1 class="text-center mb-3"><i class="fa-solid fa-code-compare text-success"></i>&nbsp;ROUGE Toolkit</h1>
+    <p class="lead text-center mb-4">Evaluate a generated summary against a reference summary using the ROUGE toolkit measures.</p>
 
     <form action="{{ url_for('rouge') }}" method="post" class="mb-5">
         <label for="reference-summary">Reference</label>
