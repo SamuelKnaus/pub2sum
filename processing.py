@@ -46,12 +46,12 @@ def process_file(request, file):
 
 
 def get_text_summary(request_text):
-    prompt = INSTRUCTION + "\n\n" + request_text
+    prompt = INSTRUCTION + "\n\n" + request_text + "\n\n###\n\n"
 
     response = openai.Completion.create(
         model="text-davinci-003",
         prompt=prompt,
-        temperature=0.1,
+        temperature=0,
         max_tokens=300,
         top_p=1,
         frequency_penalty=0.8,
