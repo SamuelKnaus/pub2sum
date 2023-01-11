@@ -1,14 +1,13 @@
 # Getting Started
 
-This is a summary generator app which can be used to create authentic summaries from scientific literature. It uses
-the [Flask](https://flask.palletsprojects.com/en/2.0.x/) web framework together with
-the [Layout Parser](https://layout-parser.github.io/) document analysis framework and
-the [GPT-3](https://openai.com/api/) language model from OpenAI. Check out the instructions below to get set up.
+This app is a summary generator for scientific literature. It employs
+the [Flask web framework](https://flask.palletsprojects.com/en/2.0.x/) in combination with
+the [GPT-3](https://openai.com/api/) language model from OpenAI. Please refer to the instructions below to set up the
+summarizer.
 
 ## Prerequisites
 
-- Linux-based operating system (e.g., MacOS or Ubuntu)
-- Python >= 3.10 [ from here](https://www.python.org/downloads/)
+- Python >= 3.10 [from here](https://www.python.org/downloads/)
 
 ## Setup
 
@@ -28,12 +27,12 @@ the [GPT-3](https://openai.com/api/) language model from OpenAI. Check out the i
    $ . venv/bin/activate
    ```
 
-4. Install the requirements<br/>
+4. Install the necessary requirements<br/>
    ```bash
-   $ cat requirements.txt | xargs -n 1 pip install
+   $ pip install requirements.txt
    ```
 
-5. Make a copy of the example environment variables file<br/>
+5. Create a copy of the example environment variables file<br/>
    ```bash
    $ cp .env.example .env
    ```
