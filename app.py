@@ -1,16 +1,15 @@
 import os
-import shutil
 
 import openai
-from flask import Flask, render_template, request
+from flask import Flask, flash, request, redirect, url_for, render_template, make_response
 from flask_assets import Environment, Bundle
-from werkzeug.utils import secure_filename
 
-from constants import TEMPORARY_FOLDER, EXTRACTION_FOLDER
+from constants import SECRET_KEY
 from helpers import allowed_file
-from processing import process_pdf, process_zip
+from processing import process_file, calculate_scores
 
 app = Flask(__name__)
+app.secret_key = SECRET_KEY
 
 assets = Environment(app)
 assets.url = app.static_url_path
@@ -30,55 +29,63 @@ def summarizer():
     if request.method == "POST":
         # check if the post request has the file part
         if "file" not in request.files:
-            print('No file part')
+            flash('No file part')
+            return redirect(url_for('summarizer'))
         file = request.files["file"]
         # If the user does not select a file, the browser submits an
         # empty file without a filename.
         if file.filename == '':
-            print("No selected file")
+            flash("Please select a file")
+            return redirect(url_for('summarizer'))
         if file and allowed_file(file.filename):
-            if file.content_type == "application/pdf":
-                if not os.path.isdir(TEMPORARY_FOLDER):
-                    os.makedirs(TEMPORARY_FOLDER)
+            if file.content_type == "text/plain":
+                items = process_file(request, file)
+                response = make_response(render_template("summarizer.html",
+                                                         summarize_text=request.form.getlist("summarize_text"),
+                                                         fetch_references=request.form.getlist("fetch_references"),
+                                                         items=items))
+                if request.form.getlist("summarize_text"):
+                    response.set_cookie("summarize_text", "1")
+                else:
+                    response.set_cookie("summarize_text", "1", expires=0)
 
-                filename = secure_filename(file.filename)
-                file.save(os.path.join(TEMPORARY_FOLDER, filename))
+                if request.form.getlist("fetch_references"):
+                    response.set_cookie("fetch_references", "1")
+                else:
+                    response.set_cookie("fetch_references", "1",  expires=0)
 
-                paragraphs, summary, completion_tokens, reference = \
-                    process_pdf(os.path.join(TEMPORARY_FOLDER, filename))
+                return response
 
-                input_text = [paragraphs]
-                summary = [summary]
-                reference = [reference]
+            flash("Wrong file format. Please upload plain .txt file")
+            return redirect(request.url)
 
-                shutil.rmtree(TEMPORARY_FOLDER)
+        flash("Please select a text file for upload")
+        return redirect(request.url)
 
-                return render_template("summarizer.html",
-                                       input_texts=input_text,
-                                       completion_tokens=completion_tokens,
-                                       summaries=summary,
-                                       references=reference)
+    return render_template("summarizer.html",
+                           summarize_text=request.cookies.get("summarize_text"),
+                           fetch_references=request.cookies.get("fetch_references"))
 
-            if file.content_type == "application/zip":
-                extraction_folder = os.path.join(TEMPORARY_FOLDER, EXTRACTION_FOLDER)
-                if not os.path.isdir(extraction_folder):
-                    os.makedirs(extraction_folder)
 
-                filename = secure_filename(file.filename)
-                file.save(os.path.join(TEMPORARY_FOLDER, filename))
+@app.route("/rouge", methods=["GET", "POST"])
+def rouge():
+    if request.method == "POST":
+        reference_summary = request.form["reference-summary"]
+        generated_summary = request.form["generated-summary"]
 
-                input_texts, summaries, completion_tokens, references = process_zip(
-                    os.path.join(TEMPORARY_FOLDER, filename), extraction_folder)
+        if not reference_summary:
+            flash("Please provide a summary for reference")
+            return redirect(request.url)
 
-                shutil.rmtree(TEMPORARY_FOLDER)
+        if not generated_summary:
+            flash("Please provide a generated summary")
+            return redirect(request.url)
 
-                return render_template("summarizer.html",
-                                       input_texts=input_texts,
-                                       completion_tokens=completion_tokens,
-                                       summaries=summaries,
-                                       references=references)
+        result_item = calculate_scores(reference_summary, generated_summary)
 
-    return render_template("summarizer.html")
+        return render_template("rouge.html", result_item=result_item)
+
+    return render_template("rouge.html")
 
 
 @app.route("/docs/getting-started", methods=["GET"])
@@ -99,8 +106,3 @@ def settings():
 @app.route("/docs/under-the-hood", methods=["GET"])
 def under_the_hood():
     return render_template("docs/under_the_hood.html")
-
-
-@app.route("/examples", methods=["GET"])
-def examples():
-    return render_template("examples.html")

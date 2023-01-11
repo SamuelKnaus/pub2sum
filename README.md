@@ -30,7 +30,7 @@ the [GPT-3](https://openai.com/api/) language model from OpenAI. Check out the i
 
 4. Install the requirements<br/>
    ```bash
-   $ pip install -r requirements.txt
+   $ cat requirements.txt | xargs -n 1 pip install
    ```
 
 5. Make a copy of the example environment variables file<br/>

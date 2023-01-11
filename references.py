@@ -1,61 +1,61 @@
 import json
-
-import pdf2doi
 import requests
 
 
-def get_references(file_path):
-    information = pdf2doi.pdf2doi(file_path)
-    identifier_type = information["identifier_type"]
-    identifier = information["identifier"]
+def get_references(identifier):
+    reference, reference_short, reference_list = fetch_bibliography(identifier)
 
-    references = fetch_bibliography(identifier_type, identifier)
-
-    if references:
-        return references
+    if reference or reference_short or reference_list:
+        return reference, reference_short, reference_list
 
     return "Could not find reference(s)."
 
 
-def fetch_bibliography(identifier_type, identifier):
-    if identifier_type == "DOI":
-        inline_item = "(Could not find reference for " + identifier + ")"
-        bib_item = "Could not find reference for " + identifier + ""
-        request_url = "https://dx.doi.org/" + identifier
+def fetch_bibliography(identifier):
+    first_reference = ""
+    continuing_reference = ""
+    reference_list_entry = ""
+    request_url = identifier
 
-        bib_headers = {"Accept": "text/x-bibliography", "style": "apa-6th-edition"}
-        bib_request = requests.get(request_url, headers=bib_headers)
-        if bib_request.text:
-            bib_item = str(bib_request.content.decode("utf-8"))
+    reference_headers = {"Accept": "application/vnd.citationstyles.csl+json"}
+    reference_request = requests.get(request_url, headers=reference_headers)
 
-        inline_headers = {"Accept": "application/vnd.citationstyles.csl+json"}
-        inline_request = requests.get(request_url, headers=inline_headers)
-        if inline_request.text:
-            inline_response = json.loads(inline_request.text)
-            authors = inline_response["author"]
+    if reference_request.text:
+        reference_response = json.loads(reference_request.text)
+        authors = reference_response["author"]
 
-            if len(authors) == 1:
-                inline_item = " (" + authors[0]["family"] + ", " \
-                              + str(inline_response["published-print"]["date-parts"][0][0]) + ")."
+        # First Reference
+        if len(authors) >= 6:
+            first_reference = authors[0]["family"] + " et al., " + str(
+                reference_response["published-print"]["date-parts"][0][0])
+        else:
+            for index, author in enumerate(authors):
+                if index == len(authors) - 1 and len(authors) > 1:
+                    first_reference += " & " + author["family"]
+                else:
+                    if index == 0:
+                        first_reference += author["family"]
+                    else:
+                        first_reference += ", " + author["family"]
+            first_reference += ", " + str(reference_response["published-print"]["date-parts"][0][0])
 
-            if len(authors) == 2:
-                inline_item = " (" + authors[0]["family"] + " & " + authors[1]["family"] + ", " \
-                              + str(inline_response["published-print"]["date-parts"][0][0]) + ")."
+        # Continuing reference
+        if len(authors) == 1:
+            continuing_reference = authors[0]["family"] + ", " + str(
+                reference_response["published-print"]["date-parts"][0][0])
 
-            if len(authors) > 2:
-                inline_item = " (" + authors[0]["family"] + " et al., " \
-                              + str(inline_response["published-print"]["date-parts"][0][0]) + ")."
+        if len(authors) == 2:
+            continuing_reference = authors[0]["family"] + " & " + authors[1]["family"] + ", " + str(
+                reference_response["published-print"]["date-parts"][0][0])
 
-        return inline_item, bib_item
+        if len(authors) > 2:
+            continuing_reference = authors[0]["family"] + " et al., " + str(
+                reference_response["published-print"]["date-parts"][0][0])
 
-    if identifier_type == "arxiv ID":
-        # request_url = "http://export.arxiv.org/api/query?id_list=" + identifier
-        # response = urllib.request.urlopen(request_url)
-        # dictionary = xmltodict.parse(response.read())
+    # Reference list entry
+    reference_list_entry_headers = {"Accept": "text/x-bibliography", "style": "apa-6th-edition"}
+    reference_list_entry_request = requests.get(request_url, headers=reference_list_entry_headers)
+    if reference_list_entry_request.text:
+        reference_list_entry = str(reference_list_entry_request.content.decode("utf-8"))
 
-        # title = dictionary["feed"]["entry"]["title"]
-        title = "(arXiv reference - work in progress)"
-
-        return title
-
-    return None
+    return first_reference, continuing_reference, reference_list_entry

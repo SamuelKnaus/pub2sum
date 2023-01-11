@@ -1,0 +1,115 @@
+{% extends "layout.html" %}
+{% set active_page = "rouge" %}
+
+{% block title %}ROUGE - pub2sum{% endblock %}
+
+{% block teaser %}
+    <h1 class="text-center mb-3"><i class="fa-solid fa-code-compare text-success"></i>&nbsp;ROUGE Toolkit</h1>
+    <p class="lead text-center mb-4">Evaluate a generated summary against a reference summary using the ROUGE toolkit measures.</p>
+
+    <form action="{{ url_for('rouge') }}" method="post" class="mb-5">
+        <label for="reference-summary">Reference</label>
+        <textarea id="reference-summary" class="form-control mb-3" name="reference-summary" cols="35"
+                  rows="4"></textarea>
+
+        <label for="generated-summary">Generated Summary</label>
+        <textarea id="generated-summary" class="form-control mb-3" name="generated-summary" cols="35"
+                  rows="4"></textarea>
+
+        <button type="submit" id="summarize-files" class="btn btn-success w-100">Evaluate</button>
+    </form>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-warning" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {% if result_item %}
+        <div class="scroll-to-results mb-5">
+            <a href="#rouge-results-section"><i class="fa-solid fa-angles-down"></i></a>
+        </div>
+    {% endif %}
+{% endblock teaser %}
+
+{% block content %}
+    {% if result_item %}
+        <div id="rouge-results-section" class="results">
+            <h2 class="text-center mb-5">Results</h2>
+
+
+            <div class="accordion" id="rouge-results-accordion">
+                {% if result_item["reference_summary"] %}
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="rouge-reference-summary">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#rouge-reference-summary-panel"
+                                    aria-expanded="false"
+                                    aria-controls="rouge-reference-summary-panel">
+                                Reference Summary
+                            </button>
+                        </h2>
+                        <div id="rouge-reference-summary-panel"
+                             class="accordion-collapse collapse"
+                             aria-labelledby="rouge-reference-summary">
+                            <div class="accordion-body">
+                                <p>{{ result_item["reference_summary"] }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if result_item["generated_summary"] %}
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="rouge-generated-summary">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#rouge-generated-summary-panel"
+                                    aria-expanded="false"
+                                    aria-controls="rouge-generated-summary-panel">
+                                Generated Summary
+                            </button>
+                        </h2>
+                        <div id="rouge-generated-summary-panel"
+                             class="accordion-collapse collapse"
+                             aria-labelledby="rouge-generated-summary">
+                            <div class="accordion-body">
+                                <p>{{ result_item["generated_summary"] }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if result_item["scores"] %}
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="rouge-scores">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#rouge-scores-panel"
+                                    aria-expanded="true"
+                                    aria-controls="rouge-scores-panel">
+                                ROUGE Scores
+                            </button>
+                        </h2>
+                        <div id="rouge-scores-panel"
+                             class="accordion-collapse collapse show"
+                             aria-labelledby="rouge-scores">
+                            <div class="accordion-body">
+                                {% for scoreName, scoreValues in result_item["scores"].items() %}
+                                    <h3>{{ scoreName }}</h3>
+                                    <p>
+                                        Precision: {{ scoreValues["precision"] }}<br>
+                                        Recall: {{ scoreValues["recall"] }}<br>
+                                        F-measure {{ scoreValues["fmeasure"] }}
+                                    </p>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+{% endblock content %}

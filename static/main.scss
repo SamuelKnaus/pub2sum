@@ -3,6 +3,41 @@
 body {
   color: #353740;
 
+  pre.ref {
+    position: relative;
+    background-color: #f6f6f6;
+    color: #2f3337;
+    padding: 12px 45px 12px 12px;
+    white-space: pre-wrap; /* Since CSS 2.1 */
+    white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+    white-space: -pre-wrap; /* Opera 4-6 */
+    white-space: -o-pre-wrap; /* Opera 7 */
+    word-wrap: break-word; /* Internet Explorer 5.5+ */
+
+    &::after {
+      position: absolute;
+      font: var(--fa-font-regular);
+      content: "\f0c5";
+      right: 0;
+      top: 0;
+      padding: 15.5px;
+      cursor: pointer;
+    }
+
+    &.copied {
+      &::after {
+        font: var(--fa-font-solid);
+        content: "\f058";
+      }
+    }
+  }
+
+  .icon::before {
+    display: inline-block;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+  }
+
   .wrapper {
     max-width: 850px;
     width: 100%;

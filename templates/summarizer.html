@@ -4,16 +4,51 @@
 {% block title %}Summarizer - pub2sum{% endblock %}
 
 {% block teaser %}
-    <h1 class="mb-3"><i class="fa-solid fa-pen-nib text-success"></i>&nbsp;Summarizer</h1>
-    <p class="lead mb-4">Upload your scientific papers here. You can analyze a single PDF file or upload a ZIP file
-        containing multiple PDFs at the same time.</p>
+    <h1 class="text-center mb-3"><i class="fa-solid fa-pen-nib text-success"></i>&nbsp;Summarizer</h1>
+    <p class="lead text-center mb-4">Upload your scientific texts here to summarize them.</p>
 
     <form action="{{ url_for('summarizer') }}" method="post" enctype="multipart/form-data" class="mb-5">
-        <input type="file" name="file" id="summarizer-file-upload" class="form-control mb-3">
+        <input class="form-control mb-3" type="file" name="file" id="summarizer-file-upload">
+
+
+        <div class="form-check form-switch mb-3">
+            {% if summarize_text %}
+                <input class="form-check-input" type="checkbox" role="switch" id="summarize_text" name="summarize_text"
+                       value="1"
+                       checked>
+            {% else %}
+                <input class="form-check-input" type="checkbox" role="switch" id="summarize_text" name="summarize_text"
+                       value="1">
+            {% endif %}
+            <label class="form-check-label" for="summarize_text">Summarize text</label>
+        </div>
+
+        <div class="form-check form-switch mb-3">
+            {% if fetch_references %}
+                <input class="form-check-input" type="checkbox" role="switch" id="fetch_references"
+                       name="fetch_references" value="1"
+                       checked>
+            {% else %}
+                <input class="form-check-input" type="checkbox" role="switch" id="fetch_references"
+                       name="fetch_references" value="1">
+            {% endif %}
+            <label class="form-check-label" for="fetch_references"> Fetch references</label>
+        </div>
+
         <button type="submit" id="summarize-files" class="btn btn-success w-100">Summarize</button>
     </form>
 
-    {% if input_texts or summaries or references %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-warning" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {% if items %}
         <div class="scroll-to-results mb-5">
             <a href="#summarizer-results-section"><i class="fa-solid fa-angles-down"></i></a>
         </div>
@@ -21,78 +56,93 @@
 {% endblock teaser %}
 
 {% block content %}
-    {% if input_texts or summaries or references %}
+    {% if items %}
         <div id="summarizer-results-section" class="results">
-            <h2 class="text-center mb-4">Results</h2>
+            <h2 class="text-center mb-5">Results</h2>
 
-            <div class="accordion" id="summarizer-results-accordion">
-                {% if input_texts %}
-                    <div class="accordion-item">
-                        <h2 class="accordion-header" id="summarizer-raw-input-text">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#summarizer-raw-input-text-panel" aria-expanded="false"
-                                    aria-controls="summarizer-raw-input-text-panel">
-                                Input Text
-                            </button>
-                        </h2>
-                        <div id="summarizer-raw-input-text-panel" class="accordion-collapse collapse"
-                             aria-labelledby="summarizer-raw-input-text">
-                            <div class="accordion-body">
-                                {% for input_text in input_texts %}
-                                    {% for paragraph in input_text %}
-                                        <p>{{ paragraph }}</p>
-                                    {% endfor %}
-                                    <hr/>
-                                {% endfor %}
+            {% for item in items %}
+                <div class="item mb-4">
+                    {% if item["first_reference"] %}
+                        <h3 class="mb-3"><i class="fa-regular fa-file-lines"></i> {{ item["first_reference"] }}</h3>
+                    {% else %}
+                        <h3>Item {{ loop.index }}</h3>
+                    {% endif %}
+                    <div class="accordion" id="summarizer-results-accordion-{{ loop.index }}">
+                        {% if item["input_text"] %}
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="summarizer-input-text-{{ loop.index }}">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#summarizer-input-text-panel-{{ loop.index }}"
+                                            aria-expanded="false"
+                                            aria-controls="summarizer-input-text-panel-{{ loop.index }}">
+                                        Input Text
+                                    </button>
+                                </h2>
+                                <div id="summarizer-input-text-panel-{{ loop.index }}"
+                                     class="accordion-collapse collapse"
+                                     aria-labelledby="summarizer-input-text-{{ loop.index }}">
+                                    <div class="accordion-body">
+                                        <p>{{ item["input_text"] }}</p>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                {% endif %}
+                        {% endif %}
 
-                {% if summaries %}
-                    <div class="accordion-item">
-                        <h2 class="accordion-header" id="summarizer-summary">
-                            <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#summarizer-summary-panel" aria-expanded="true"
-                                    aria-controls="summarizer-summary-panel">
-                                Summary
-                            </button>
-                        </h2>
-                        <div id="summarizer-summary-panel" class="accordion-collapse collapse show"
-                             aria-labelledby="summarizer-summary">
-                            <div class="accordion-body">
-                                <pre>{{ completion_tokens }} Tokens</pre>
-                                <hr>
-                                {% for summary in summaries %}
-                                    <p>{{ summary }}</p>
-                                {% endfor %}
+                        {% if item["summary"] %}
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="summarizer-summary-{{ loop.index }}">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#summarizer-summary-panel-{{ loop.index }}"
+                                            aria-expanded="true"
+                                            aria-controls="summarizer-summary-panel-{{ loop.index }}">
+                                        Summary
+                                    </button>
+                                </h2>
+                                <div id="summarizer-summary-panel-{{ loop.index }}"
+                                     class="accordion-collapse collapse show"
+                                     aria-labelledby="summarizer-summary-{{ loop.index }}">
+                                    <div class="accordion-body">
+                                        <pre>{{ item["completion_tokens"] }} Tokens</pre>
+                                        <hr>
+                                        <p>{{ item["summary"] }}</p>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                {% endif %}
+                        {% endif %}
 
-                {% if references %}
-                    <div class="accordion-item">
-                        <h2 class="accordion-header" id="summarizer-reference-list">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#summarizer-reference-list-panel" aria-expanded="false"
-                                    aria-controls="summarizer-reference-list-panel">
-                                Reference List
-                            </button>
-                        </h2>
-                        <div id="summarizer-reference-list-panel" class="accordion-collapse collapse"
-                             aria-labelledby="summarizer-reference-list">
-                            <div class="accordion-body">
-                                <ul>
-                                    {% for reference in references %}
-                                        <li>{{ reference }}</li>
-                                    {% endfor %}
-                                </ul>
+                        {% if item["first_reference"] or item["continuing_reference"] or item["reference_list_entry"] %}
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="summarizer-reference-{{ loop.index }}">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#summarizer-reference-panel-{{ loop.index }}"
+                                            aria-expanded="false"
+                                            aria-controls="summarizer-reference-panel-{{ loop.index }}">
+                                        References
+                                    </button>
+                                </h2>
+                                <div id="summarizer-reference-panel-{{ loop.index }}"
+                                     class="accordion-collapse collapse"
+                                     aria-labelledby="summarizer-reference-{{ loop.index }}">
+                                    <div class="accordion-body">
+                                        {% if item["first_reference"] %}
+                                            <p class="fw-bold">First reference:</p>
+                                            <pre class="ref">({{ item["first_reference"] }})</pre>
+                                        {% endif %}
+                                        {% if item["continuing_reference"] %}
+                                            <p class="fw-bold">Continuing reference:</p>
+                                            <pre class="ref">({{ item["continuing_reference"] }})</pre>
+                                        {% endif %}
+                                        {% if item["reference_list_entry"] %}
+                                            <p class="fw-bold">Reference list item:</p>
+                                            <pre class="ref">{{ item["reference_list_entry"] }}</pre>
+                                        {% endif %}
+                                    </div>
+                                </div>
                             </div>
-                        </div>
+                        {% endif %}
                     </div>
-                {% endif %}
-            </div>
+                </div>
+            {% endfor %}
         </div>
     {% endif %}
 {% endblock content %}
