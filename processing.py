@@ -25,7 +25,17 @@ def process_file(request, file):
 
         if (request.form.getlist("summarize_text") and request.cookies.get("summarize_text")) or (
                 request.form.getlist("summarize_text") and not request.cookies.get("summarize_text")):
-            response = get_text_summary(text)
+
+            if request.form.getlist("use_fine_tuned_model") and request.cookies.get("use_fine_tuned_model") or (
+                    request.form.getlist("use_fine_tuned_model") and not request.cookies.get("use_fine_tuned_model")):
+                print("Using custom [davinci:ft-personal:master-500-2023-01-12-12-09-28]")
+                model = "davinci:ft-personal:master-500-2023-01-12-12-09-28"
+            else:
+                print("Using standard [text-davinci-003]")
+                model = "text-davinci-003"
+
+            response = get_text_summary(text, model)
+
             summary = response.choices[0].text[:-1]
             completion_tokens = response.usage.completion_tokens
 
@@ -45,17 +55,17 @@ def process_file(request, file):
     return items
 
 
-def get_text_summary(request_text):
+def get_text_summary(request_text, model):
     prompt = INSTRUCTION + "\n\n" + request_text + "\n\n###\n\n"
-
     response = openai.Completion.create(
-        model="text-davinci-003",
+        model=model,
         prompt=prompt,
         temperature=0,
         max_tokens=300,
         top_p=1,
         frequency_penalty=0.8,
-        presence_penalty=0.6
+        presence_penalty=0.6,
+        stop="\n\n###\n\n"
     )
 
     return response

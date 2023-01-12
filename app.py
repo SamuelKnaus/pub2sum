@@ -43,6 +43,8 @@ def summarizer():
                 response = make_response(render_template("summarizer.html",
                                                          summarize_text=request.form.getlist("summarize_text"),
                                                          fetch_references=request.form.getlist("fetch_references"),
+                                                         use_fine_tuned_model=request.form.getlist(
+                                                             "use_fine_tuned_model"),
                                                          items=items))
                 if request.form.getlist("summarize_text"):
                     response.set_cookie("summarize_text", "1")
@@ -52,7 +54,12 @@ def summarizer():
                 if request.form.getlist("fetch_references"):
                     response.set_cookie("fetch_references", "1")
                 else:
-                    response.set_cookie("fetch_references", "1",  expires=0)
+                    response.set_cookie("fetch_references", "1", expires=0)
+
+                if request.form.getlist("use_fine_tuned_model"):
+                    response.set_cookie("use_fine_tuned_model", "1")
+                else:
+                    response.set_cookie("use_fine_tuned_model", "1", expires=0)
 
                 return response
 
@@ -64,7 +71,8 @@ def summarizer():
 
     return render_template("summarizer.html",
                            summarize_text=request.cookies.get("summarize_text"),
-                           fetch_references=request.cookies.get("fetch_references"))
+                           fetch_references=request.cookies.get("fetch_references"),
+                           use_fine_tuned_model=request.cookies.get("use_fine_tuned_model"))
 
 
 @app.route("/rouge", methods=["GET", "POST"])
