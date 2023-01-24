@@ -65,7 +65,7 @@ def get_text_summary(request_text, model):
         top_p=1,
         frequency_penalty=0.8,
         presence_penalty=0.6,
-        stop="\n\n###\n\n"
+        stop=["###"]
     )
 
     return response
