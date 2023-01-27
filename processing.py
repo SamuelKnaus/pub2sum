@@ -1,3 +1,6 @@
+import textwrap
+
+import PyPDF2
 import openai
 from rouge_score import rouge_scorer
 
@@ -5,7 +8,7 @@ from constants import DELIMITER, INSTRUCTION
 from references import get_references
 
 
-def process_file(request, file):
+def process_text_file(request, file):
     raw_text = file.read().decode("utf-8")
     texts = raw_text.split(DELIMITER)
     items = []
@@ -51,6 +54,49 @@ def process_file(request, file):
             item["reference_list_entry"] = reference_list_entry
 
         items.append(item)
+
+    return items
+
+
+def process_pdf_file(file_path):
+    print("Processing PDF file...")
+    paper = ["", "", ""]
+
+    pdf = open(file_path, 'rb')
+    pdfreader = PyPDF2.PdfFileReader(pdf)
+    num_pages = pdfreader.numPages
+
+    for i in list(range(0, num_pages)):
+        page = pdfreader.getPage(i)
+        text = page.extractText()
+        paper[0] = paper[0] + '\n' + text
+
+    level = 1
+    while level < 3:
+        print("-Level " + str(level) + "-")
+        chunks = textwrap.wrap(paper[level-1], 6000)
+
+        for index, chunk in enumerate(chunks):
+            print("Processing level " + str(level) + " chunk " + str(index))
+            response = get_text_summary(chunk, "text-davinci-003")
+            summary = response.choices[0].text[:-1]
+            paper[level] = paper[level] + " " + summary
+
+        level += 1
+
+    print("*** Final Summary ***\n" + paper[2])
+
+    items = []
+    item = {
+        "input_text": None,
+        "summary": None,
+        "completion_tokens": None,
+        "reference": None,
+        "reference_short": None,
+        "reference_list": None
+    }
+
+    items.append(item)
 
     return items
 
