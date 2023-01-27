@@ -66,6 +66,7 @@
                     {% else %}
                         <h3>Item {{ loop.index }}</h3>
                     {% endif %}
+
                     <div class="accordion" id="summarizer-results-accordion-{{ loop.index }}">
                         {% if item["input_text"] %}
                             <div class="accordion-item">
@@ -101,8 +102,6 @@
                                      class="accordion-collapse collapse show"
                                      aria-labelledby="summarizer-summary-{{ loop.index }}">
                                     <div class="accordion-body">
-                                        <pre>{{ item["completion_tokens"] }} Tokens</pre>
-                                        <hr>
                                         <p>{{ item["summary"] }}</p>
                                     </div>
                                 </div>

@@ -51,8 +51,10 @@ def summarizer():
                 filename = secure_filename(file.filename)
                 file.save(os.path.join(TEMPORARY_FOLDER, filename))
 
-                items = process_pdf_file(os.path.join(TEMPORARY_FOLDER, filename))
+                items = process_pdf_file(request, os.path.join(TEMPORARY_FOLDER, filename))
+
                 response = make_response(render_template("summarizer.html", items=items))
+
                 return response
 
             flash("Wrong file format. Please upload plain .txt file")

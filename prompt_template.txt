@@ -1,0 +1,6 @@
+Summarize the following extract of a paper for literature review.
+
+PAPER EXTRACT:
+<<EXTRACT>>
+
+LITERATURE REVIEW SUMMARY:

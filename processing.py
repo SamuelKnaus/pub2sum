@@ -1,7 +1,7 @@
 import textwrap
 
-import PyPDF2
 import openai
+from pypdf import PdfReader
 from rouge_score import rouge_scorer
 
 from constants import DELIMITER, INSTRUCTION
@@ -17,7 +17,6 @@ def process_text_file(request, file):
         item = {
             "input_text": None,
             "summary": None,
-            "completion_tokens": None,
             "reference": None,
             "reference_short": None,
             "reference_list": None
@@ -40,10 +39,8 @@ def process_text_file(request, file):
             response = get_text_summary(text, model)
 
             summary = response.choices[0].text[:-1]
-            completion_tokens = response.usage.completion_tokens
 
             item["summary"] = summary
-            item["completion_tokens"] = completion_tokens
 
         if request.form.getlist("fetch_references") and request.cookies.get("fetch_references") or (
                 request.form.getlist("fetch_references") and not request.cookies.get("fetch_references")):
@@ -58,18 +55,27 @@ def process_text_file(request, file):
     return items
 
 
-def process_pdf_file(file_path):
-    print("Processing PDF file...")
+def process_pdf_file(request, file_path):
+    items = []
+    item = {
+        "input_text": None,
+        "summary": None,
+        "reference": None,
+        "reference_short": None,
+        "reference_list": None
+    }
     paper = ["", "", ""]
 
-    pdf = open(file_path, 'rb')
-    pdfreader = PyPDF2.PdfFileReader(pdf)
-    num_pages = pdfreader.numPages
+    print("Processing PDF file...")
 
-    for i in list(range(0, num_pages)):
-        page = pdfreader.getPage(i)
-        text = page.extractText()
+    reader = PdfReader(file_path)
+    number_of_pages = len(reader.pages)
+
+    for i in list(range(0, number_of_pages)):
+        page = reader.pages[i]
+        text = page.extract_text()
         paper[0] = paper[0] + '\n' + text
+    item["input_text"] = paper[0]
 
     level = 1
     while level < 3:
@@ -83,18 +89,8 @@ def process_pdf_file(file_path):
             paper[level] = paper[level] + " " + summary
 
         level += 1
-
+    item["summary"] = paper[2]
     print("*** Final Summary ***\n" + paper[2])
-
-    items = []
-    item = {
-        "input_text": None,
-        "summary": None,
-        "completion_tokens": None,
-        "reference": None,
-        "reference_short": None,
-        "reference_list": None
-    }
 
     items.append(item)
 
