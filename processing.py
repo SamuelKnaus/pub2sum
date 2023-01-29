@@ -80,7 +80,7 @@ def process_pdf_file(request, file_path):
     level = 1
     while level < 3:
         print("-Level " + str(level) + "-")
-        chunks = textwrap.wrap(paper[level-1], 6000)
+        chunks = textwrap.wrap(paper[level - 1], 6000)
 
         for index, chunk in enumerate(chunks):
             print("Processing level " + str(level) + " chunk " + str(index))
@@ -107,7 +107,7 @@ def get_text_summary(request_text, model):
         top_p=1,
         frequency_penalty=0.8,
         presence_penalty=0.6,
-        stop="\n\n###\n\n"
+        stop=["###", "\n\n###\n\n"]
     )
 
     return response
