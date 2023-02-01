@@ -35,3 +35,5 @@ Flask-Assets==2.0
 libsass==0.22.0
 rouge-score==0.1.2
 pypdf==3.3.0
+pdf2doi==1.5
+PyPDF2==2.12.1

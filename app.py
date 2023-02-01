@@ -1,4 +1,5 @@
 import os
+import shutil
 
 import openai
 from flask import Flask, flash, request, redirect, url_for, render_template, make_response
@@ -7,7 +8,7 @@ from werkzeug.utils import secure_filename
 
 from constants import SECRET_KEY, TEMPORARY_FOLDER
 from helpers import allowed_file
-from processing import process_text_file, process_pdf_file , calculate_scores
+from processing import process_pdf_file, process_zip_file, calculate_scores
 
 app = Flask(__name__)
 app.secret_key = SECRET_KEY
@@ -39,11 +40,6 @@ def summarizer():
             flash("Please select a file")
             return redirect(url_for('summarizer'))
         if file and allowed_file(file.filename):
-            if file.content_type == "text/plain":
-                items = process_text_file(request, file)
-                response = make_response(render_template("summarizer.html", items=items))
-                return response
-
             if file.content_type == "application/pdf":
                 if not os.path.isdir(TEMPORARY_FOLDER):
                     os.makedirs(TEMPORARY_FOLDER)
@@ -53,8 +49,15 @@ def summarizer():
 
                 items = process_pdf_file(request, os.path.join(TEMPORARY_FOLDER, filename))
 
+                shutil.rmtree(TEMPORARY_FOLDER)
+
                 response = make_response(render_template("summarizer.html", items=items))
 
+                return response
+
+            if file.content_type == "text/plain":
+                items = process_zip_file(request, file)
+                response = make_response(render_template("summarizer.html", items=items))
                 return response
 
             flash("Wrong file format. Please upload plain .txt file")

@@ -15,7 +15,7 @@ def fetch_bibliography(identifier):
     first_reference = ""
     continuing_reference = ""
     reference_list_entry = ""
-    request_url = identifier
+    request_url = "http://dx.doi.org/" + identifier
 
     reference_headers = {"Accept": "application/vnd.citationstyles.csl+json"}
     reference_request = requests.get(request_url, headers=reference_headers)
