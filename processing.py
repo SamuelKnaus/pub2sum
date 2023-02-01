@@ -66,7 +66,7 @@ def process_zip_file(request, file):
 
 
 def get_text_summary(request_text, model):
-    prompt = INSTRUCTION + "\n\n" + request_text + "\n\n###\n\n"
+    prompt = INSTRUCTION + "\n\n" + request_text + "###"
     response = openai.Completion.create(
         model=model,
         prompt=prompt,
@@ -75,7 +75,7 @@ def get_text_summary(request_text, model):
         top_p=1,
         frequency_penalty=0.8,
         presence_penalty=0.6,
-        stop=["###", "\n\n###\n\n"]
+        stop=[" END"]
     )
 
     return response
