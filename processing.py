@@ -5,7 +5,7 @@ import openai
 from pypdf import PdfReader
 from rouge_score import rouge_scorer
 
-from constants import INSTRUCTION, DEFAULT_MODEL, FINE_TUNED_MODEL
+from constants import INSTRUCTION
 from references import get_references
 
 
@@ -38,14 +38,11 @@ def process_pdf_file(request, file_path):
             chunks = textwrap.wrap(paper[level - 1], 6000)
             for index, chunk in enumerate(chunks):
                 print("Processing level " + str(level) + " chunk " + str(index))
-                if request.form.getlist("use_fine_tuned_model"):
-                    response = get_text_summary(chunk, FINE_TUNED_MODEL)
-                else:
-                    response = get_text_summary(chunk, DEFAULT_MODEL)
+                response = get_text_summary(chunk, "text-davinci-003")
                 summary = response.choices[0].text[:-1]
                 paper[level] = paper[level] + " " + summary
             level += 1
-        item["summary"] = paper[2]
+        item["summary"] = paper[2] + "."
         print("*** Final Summary ***\n" + paper[2])
 
     if request.form.getlist("fetch_references"):
