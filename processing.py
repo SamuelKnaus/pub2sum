@@ -46,14 +46,20 @@ def process_pdf_file(request, file_path):
 
             for index, chunk in enumerate(chunks):
                 print("Processing level " + str(level) + " chunk " + str(index))
-                response = get_text_summary(chunk, "text-davinci-003")
+                response = get_text_summary(input_text=chunk, model="text-davinci-003", max_tokens=300)
                 summary = response.choices[0].text[:-1]
                 text_summary = text_summary + " " + summary
 
             chunks = textwrap.wrap(text_summary, 6000)
+            level += 1
 
-        item["summary"] = text_summary + "."
-        print("*** Final Summary ***\n" + text_summary)
+        # Request final summary when only one chunk is left
+        print("Processing level " + str(level) + " chunk 0")
+        response = get_text_summary(input_text=chunks[0], model="text-davinci-003", max_tokens=300)
+        summary = response.choices[0].text[:-1]
+
+        item["summary"] = summary + "."
+        print("*** Final Summary ***\n" + summary)
 
     # Only fetch references if the user decided to turn on the switch in the GUI
     if request.form.getlist("fetch_references"):
@@ -73,18 +79,17 @@ def process_zip_file(request, file):
     return "process zip"
 
 
-def get_text_summary(request_text, model):
-    prompt = INSTRUCTION + "\n\n" + request_text + "###"
+def get_text_summary(input_text, model, max_tokens=500):
+    prompt = INSTRUCTION + "\n\n" + "Text: ###\n"  + input_text + "\n###"
 
     response = openai.Completion.create(
         model=model,
         prompt=prompt,
         temperature=0,
-        max_tokens=300,
+        max_tokens=max_tokens,
         top_p=1,
         frequency_penalty=0.8,
-        presence_penalty=0.6,
-        stop=[" END"]
+        presence_penalty=0.6
     )
 
     return response
