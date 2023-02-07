@@ -6,5 +6,18 @@
 
 {% block content %}
     <h1>How it Works</h1>
+    <p><i class="fa-regular fa-file-pdf text-success my-1"></i>&nbsp;<strong>pub2sum</strong> combines different
+        technologies like layoutparser and pdf2doi to achieve its results.</p>
+    <p><strong>Summarization</strong><br>
+        Optical character recognition (OCR) is used to filter out the text of a paper. This text is then split into
+        chunks and fed to the OpenAI API for summarization. After one round the algorithm checks if the resulting
+        summaries are still too long for GPT-3 to process in one request. If not, the text is split again into chunks
+        and summarized. This process is repeated until only one chunk of text is left, which is used for a last request
+        to obtain the final summary of the paper.</p>
+    <p><strong>Fetching references</strong><br>
+        First, the pdf2doi library is used to obtain the DOI of the paper. This identifier is then used to fetch the
+        relevant metadata of the scientific paper via API calls. The response is formatted into three references. The
+        first reference in the text, the continuing reference, and the reference list entry.
+    </p>
 
 {% endblock content %}
