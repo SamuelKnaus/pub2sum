@@ -7,16 +7,18 @@
 {% block content %}
     <h1>Getting Started</h1>
     <p>Find out how <i class="fa-regular fa-file-pdf text-success my-1"></i>&nbsp;<strong>pub2sum</strong> can be
-        employed to automatically create human-like summaries for you.</p>
+        employed to automatically generate human-like summaries for your scientific papers and generate copy-paste
+        references on the go.</p>
 
     <ol>
         <li><p>Navigate to the <a href="{{ url_for('summarizer') }}">Summarizer</a> page.</p></li>
         <li><p>Click on <strong>Choose file</strong>.</p></li>
-        <li><p>Select a single PDF paper or a ZIP file containing multiple PDF papers from your machine and confirm the
-            upload.</p></li>
+        <li><p>Select a scientific PDF paper from your device.</p></li>
+        <li><p>Chose if you want <i class="fa-regular fa-file-pdf text-success my-1"></i>&nbsp;<strong>pub2sum</strong>
+            to summarize and/or fetch references for you,</p></li>
         <li><p>Click on <strong>Summarize</strong> to start analyzing.</p></li>
-        <li>Once done the site will refresh automatically showing you summaries for each paper including references and
-            a reference list.
+        <li>The algorithm will now process your request automatically. This might take some time. Once done the site
+            will refresh and show you the results depending on the options chose before.
         </li>
     </ol>
 
