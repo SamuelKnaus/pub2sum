@@ -5,6 +5,7 @@ import numpy as np
 import openai
 import pdf2doi
 from rouge_score import rouge_scorer
+from tenacity import retry, stop_after_attempt, wait_random_exponential
 
 from constants import FIRST_INSTRUCTION, LAYOUT_MODEL, EXTRA_CONFIG, LABEL_MAP, FINAL_INSTRUCTION
 from references import get_references
@@ -38,7 +39,7 @@ def process_pdf_file(request, file_path):
 
             for index, chunk in enumerate(chunks):
                 print("Processing level " + str(level) + " chunk " + str(index))
-                response = get_text_summary(FIRST_INSTRUCTION, input_text=chunk, model="text-davinci-003", max_tokens=400)
+                response = get_text_summary(FIRST_INSTRUCTION, input_text=chunk, model="text-davinci-003", max_tokens=300)
                 summary = response.choices[0].text[:-1]
                 text_summary = text_summary + " " + summary
 
@@ -127,6 +128,7 @@ def process_zip_file(request, file):
     return "process zip"
 
 
+@retry(wait=wait_random_exponential(min=1, max=60), stop=stop_after_attempt(6))
 def get_text_summary(instruction, input_text, model, max_tokens=500):
     prompt = instruction + "\n\n" + "Text: ###\n" + input_text + "\n###"
 
