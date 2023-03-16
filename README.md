@@ -29,7 +29,7 @@ summarizer.
 
 4. Install the necessary requirements<br/>
    ```bash
-   $ pip install requirements.txt
+   $ cat requirements.txt | xargs -n 1 pip install
    ```
 
 5. Create a copy of the example environment variables file<br/>
