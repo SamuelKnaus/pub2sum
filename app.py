@@ -93,21 +93,16 @@ def rouge():
     return render_template("rouge.html")
 
 
-@app.route("/docs/getting-started", methods=["GET"])
+@app.route("/help/getting-started", methods=["GET"])
 def getting_started():
-    return render_template("docs/getting_started.html")
+    return render_template("help/getting_started.html")
 
 
-@app.route("/docs/how-it-works", methods=["GET"])
+@app.route("/help/how-it-works", methods=["GET"])
 def how_it_works():
-    return render_template("docs/how_it_works.html")
+    return render_template("help/how_it_works.html")
 
 
-@app.route("/docs/settings", methods=["GET"])
-def settings():
-    return render_template("docs/settings.html")
-
-
-@app.route("/docs/under-the-hood", methods=["GET"])
-def under_the_hood():
-    return render_template("docs/under_the_hood.html")
+@app.route("/help/rouge", methods=["GET"])
+def rouge_doc():
+    return render_template("help/rouge.html")

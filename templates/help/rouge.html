@@ -1,0 +1,20 @@
+{% extends "help/docs_layout.html" %}
+{% set active_page = "help" %}
+{% set active_docs_page = "rouge_doc" %}
+
+{% block title %}Parameters - pub2sum{% endblock title %}
+
+{% block content %}
+    <h1>ROUGE</h1>
+    <p>The <a href="https://github.com/google-research/google-research/tree/master/rouge" target="_blank">Python
+        implementation</a> of ROUGE from the Google Research team is used for this project. It is designed to duplicate
+        the perl package from Lin (2004). The following metrics are implemented.
+    </p>
+    <ul>
+        <li>ROUGE-1</li>
+        <li>ROUGE-L</li>
+    </ul>
+    <p>Porter stemming is applied before the metrics are calculated.</p>
+    <p><i class="fa-regular fa-file-lines"></i> Lin, C.-Y. (2004). Rouge: A package for automatic evaluation of
+        summaries. <i>Text Summarization Branches Out</i>, 74–81.</p>
+{% endblock content %}
