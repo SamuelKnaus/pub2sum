@@ -2,6 +2,7 @@ import json
 import requests
 
 
+# Main function to fetch references based on the identifier
 def get_references(identifier):
     reference, reference_short, reference_list = fetch_bibliography(identifier)
 
@@ -11,6 +12,7 @@ def get_references(identifier):
     return "Could not find reference(s)."
 
 
+# Fetch json object to build reference entries from DOI
 def fetch_bibliography(identifier):
     first_reference = ""
     continuing_reference = ""

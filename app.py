@@ -8,7 +8,7 @@ from werkzeug.utils import secure_filename
 
 from constants import SECRET_KEY, TEMPORARY_FOLDER
 from helpers import allowed_file
-from processing import process_pdf_file, process_zip_file, calculate_scores
+from processing import process_pdf_file, calculate_scores
 
 app = Flask(__name__)
 app.secret_key = SECRET_KEY
@@ -45,25 +45,20 @@ def summarizer():
                     os.makedirs(TEMPORARY_FOLDER)
 
                 filename = secure_filename(file.filename)
-                file.save(os.path.join(TEMPORARY_FOLDER, filename))
+                file.save(os.path.join(TEMPORARY_FOLDER, filename))  # save pdf temporarily to disk
 
-                items = process_pdf_file(request, os.path.join(TEMPORARY_FOLDER, filename))
+                items = process_pdf_file(request, os.path.join(TEMPORARY_FOLDER, filename))  # process pdf file
 
-                shutil.rmtree(TEMPORARY_FOLDER)
+                shutil.rmtree(TEMPORARY_FOLDER)  # delete pdf file after processing again
 
                 response = make_response(render_template("summarizer.html", items=items))
 
                 return response
 
-            if file.content_type == "text/plain":
-                items = process_zip_file(request, file)
-                response = make_response(render_template("summarizer.html", items=items))
-                return response
-
-            flash("Wrong file format. Please upload plain .txt file")
+            flash("Wrong file format. Please upload PDF file")
             return redirect(request.url)
 
-        flash("Please select a text file for upload")
+        flash("Please select a file for upload")
         return redirect(request.url)
 
     return render_template("summarizer.html",
